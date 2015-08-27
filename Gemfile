@@ -14,3 +14,4 @@ gem 'spring',        group: :development
 
 #added
 gem 'dotenv-rails', :groups => [:development, :test]
+gem 'unicorn'
