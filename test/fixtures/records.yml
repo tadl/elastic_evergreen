@@ -1,0 +1,39 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyText
+  author: MyText
+  record_id: MyString
+  e_resource: MyText
+  abstract: MyText
+  contents: MyText
+  format_type: MyText
+  record_year: MyString
+  call_number: MyString
+  publisher: MyText
+  publisher_location: MyText
+  isbn: 
+  physical_description: MyText
+  subject: 
+  genre: 
+  series: 
+  availability: 
+
+two:
+  title: MyText
+  author: MyText
+  record_id: MyString
+  e_resource: MyText
+  abstract: MyText
+  contents: MyText
+  format_type: MyText
+  record_year: MyString
+  call_number: MyString
+  publisher: MyText
+  publisher_location: MyText
+  isbn: 
+  physical_description: MyText
+  subject: 
+  genre: 
+  series: 
+  availability: 
