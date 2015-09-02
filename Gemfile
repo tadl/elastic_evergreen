@@ -15,3 +15,5 @@ gem 'spring',        group: :development
 #added
 gem 'dotenv-rails', :groups => [:development, :test]
 gem 'unicorn'
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
