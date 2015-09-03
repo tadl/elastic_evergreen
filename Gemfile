@@ -16,3 +16,6 @@ gem 'spring',        group: :development
 gem 'dotenv-rails', :groups => [:development, :test]
 gem 'unicorn'
 gem 'pg_search'
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
+

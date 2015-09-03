@@ -39,8 +39,24 @@ GEM
     dotenv (2.0.1)
     dotenv-rails (2.0.1)
       dotenv (= 2.0.1)
+    elasticsearch (1.0.12)
+      elasticsearch-api (= 1.0.12)
+      elasticsearch-transport (= 1.0.12)
+    elasticsearch-api (1.0.12)
+      multi_json
+    elasticsearch-model (0.1.7)
+      activesupport (> 3)
+      elasticsearch (> 0.4)
+      hashie
+    elasticsearch-rails (0.1.7)
+    elasticsearch-transport (1.0.12)
+      faraday
+      multi_json
     erubis (2.7.0)
     execjs (2.6.0)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
+    hashie (3.4.2)
     hike (1.2.3)
     i18n (0.7.0)
     jbuilder (2.3.1)
@@ -56,6 +72,7 @@ GEM
     mime-types (2.6.1)
     minitest (5.8.0)
     multi_json (1.11.2)
+    multipart-post (2.0.0)
     pg (0.18.2)
     pg_search (0.7.9)
       activerecord (>= 3.1)
@@ -122,6 +139,8 @@ PLATFORMS
 DEPENDENCIES
   coffee-rails (~> 4.0.0)
   dotenv-rails
+  elasticsearch-model
+  elasticsearch-rails
   jbuilder (~> 2.0)
   jquery-rails
   pg
