@@ -7,7 +7,9 @@ class MainController < ApplicationController
   	title = URI.unescape(params[:title]) rescue ''
   	author = URI.unescape(params[:author]) rescue ''
   	search_type = params[:search_type] rescue nil
-  	if search_type.nil? || search_type = 'keyword'
+    if search_type.nil?
+        @records = Record.search(keyword)
+    elsif search_type == 'keyword'
     	@records = Record.search_keyword(keyword + ' ' + title + ' ' + author)
   	elsif search_type == 'author'
   		@records = Record.search_author(author)
