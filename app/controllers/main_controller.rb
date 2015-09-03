@@ -13,7 +13,7 @@ class MainController < ApplicationController
         # Use pg_search here
     	@records = Record.search_keyword(keyword + ' ' + title + ' ' + author)
   	elsif search_type == 'author'
-        @records = Record.search query: {match: {author: author} }
+        @records = Record.search query: {match: { author: {query: author, fuzziness: 1} } }
   	elsif search_type == 'title'
         @records = Record.search query: {match: {title: title} }
   	end
