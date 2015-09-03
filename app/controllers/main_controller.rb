@@ -7,14 +7,15 @@ class MainController < ApplicationController
   	title = URI.unescape(params[:title]) rescue ''
   	author = URI.unescape(params[:author]) rescue ''
   	search_type = params[:search_type] rescue nil
-    if search_type.nil?
+    if search_type.nil? || search_type == 'keyword'
         @records = Record.search(keyword)
-    elsif search_type == 'keyword'
+    elsif search_type == 'pgkeyword'
+        # Use pg_search here
     	@records = Record.search_keyword(keyword + ' ' + title + ' ' + author)
   	elsif search_type == 'author'
-  		@records = Record.search_author(author)
+        @records = Record.search query: {match: {author: author} }
   	elsif search_type == 'title'
-  		@records = Record.search_title(title)
+        @records = Record.search query: {match: {title: title} }
   	end
   	respond_to do |format|
       format.html
