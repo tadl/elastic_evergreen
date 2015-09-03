@@ -57,6 +57,10 @@ GEM
     minitest (5.8.0)
     multi_json (1.11.2)
     pg (0.18.2)
+    pg_search (0.7.9)
+      activerecord (>= 3.1)
+      activesupport (>= 3.1)
+      arel
     rack (1.5.5)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -121,6 +125,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   pg
+  pg_search
   rails (= 4.1.8)
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
