@@ -13,8 +13,10 @@ class MainController < ApplicationController
         # Use pg_search here
     	@records = Record.search_keyword(keyword + ' ' + title + ' ' + author)
   	elsif search_type == 'author'
-        response = Record.search query: {match: { author: {query: author, fuzziness: 1} } }
-        @records = response.records.to_a
+        # response = Record.search query: {match: { author: {query: author, fuzziness: 1} } }
+        response = Record.search min_score: 0.1, query: {bool:{ should:[{match: {author: author}}, {match_phrase: {author: author}}, {fuzzy: {author: author}}]}}
+        # @records = response
+        @records = response.records
   	elsif search_type == 'title'
         @records = Record.search query: {match: {title: title} }
   	end
