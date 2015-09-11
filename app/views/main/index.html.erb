@@ -1,1 +1,10 @@
 <h2> <%= @record_count %> records in database </h2>
+<dl>
+<% @records.each do |record| %>
+<dt><strong><%= record.title %></strong> - <em><%= record.author %></em></dt>
+<dd>
+<p><%= record.physical_description %></p>
+<p><%= record.abstract %></p>
+</dd>
+<% end %>
+</dl>
