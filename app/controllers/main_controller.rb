@@ -18,7 +18,7 @@ class MainController < ApplicationController
         # @records = response
         @records = response.records
   	elsif search_type == 'title'
-        @records = Record.search query: {match: {title: title} }
+        @records = Record.search query: {multi_match: {type: 'most_fields', query: title, fields: ['title', 'title.folded']} }
   	end
   	respond_to do |format|
       format.html
