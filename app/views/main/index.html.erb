@@ -6,6 +6,7 @@
 <div style="clear: both"></div>
 <div style="margin: 5px; padding: 5px; border: 1px #000 solid; width: 45%; float: left;">
 	<h2 style="margin: 5px;">Elastic Results:</h2>
+	<div id="elastic_results"></div>
 </div>
 <div style="margin: 5px; padding: 5px; border: 1px #000 solid; width: 45%; float: right;">
 	<h2 style="margin: 5px;">Evergreen Results:</h2>
@@ -27,6 +28,12 @@ function get_egresults(query, time_start){
 
 function get_elastic(query, time_start){
 	alert(query)
+	$.get('http://elastic-evergreen.herokuapp.com/main/index.json?query=' + query).done(function(data){
+		$.each(data, function(i, result){
+			$('#elastic_results').append(result.title)
+		});
+	});
+
 }
 
 </script>
