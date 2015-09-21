@@ -6,9 +6,11 @@ default: &default
 
 development:
   <<: *default
-  database: elastic_evergreen-development
-  username: postgres
-  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  host: ec2-54-243-149-147.compute-1.amazonaws.com
+  database: ddvvrc82cotjvv
+  username: fgvlsyiuobghcg
+  port: 5432
+  password: <%= ENV['HEROKU_POSTGRES_PASSWORD'] %>
 
 test:
   <<: *default

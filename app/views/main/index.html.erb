@@ -1,10 +1,32 @@
-<h2> <%= @record_count %> records in database </h2>
-<dl>
-<% @records.each do |record| %>
-<dt><strong><%= record.title %></strong> - <em><%= record.author %></em></dt>
-<dd>
-<p><%= record.physical_description %></p>
-<p><%= record.abstract %></p>
-</dd>
-<% end %>
-</dl>
+<form>
+	<label>Search Term</label>
+	<input id="query"></input>
+	<a onclick="get_results()" style="color: #fff; padding: 5px; background-color: #000;">Search</a>
+<form>
+<div style="clear: both"></div>
+<div style="margin: 5px; padding: 5px; border: 1px #000 solid; width: 45%; float: left;">
+	<h2 style="margin: 5px;">Elastic Results:</h2>
+</div>
+<div style="margin: 5px; padding: 5px; border: 1px #000 solid; width: 45%; float: right;">
+	<h2 style="margin: 5px;">Evergreen Results:</h2>
+</div>
+<div style="clear: both"></div>
+
+
+<script>
+function get_results(){
+	var query = $('#query').val()
+	var time_start = Date.now();
+	get_egresults(query, time_start);
+	get_elastic(query, time_start);
+}
+
+function get_egresults(query, time_start){
+	alert('eg')
+}
+
+function get_elastic(query, time_start){
+	alert(query)
+}
+
+</script>
