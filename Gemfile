@@ -19,3 +19,6 @@ gem 'pg_search'
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 
+group :production do
+  gem 'rails_12factor'
+end
