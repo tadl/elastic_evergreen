@@ -1,39 +1,95 @@
-<form>
-	<label>Search Term</label>
+<style>
+	body{
+		font-family: 'Roboto', sans-serif;
+		background-color: #E3F2FD;
+	}
+
+ .cover_image{
+	height: 75px;
+	width: 75px;
+	-moz-border-radius: 50px;
+	-webkit-border-radius: 50px;
+	border-radius: 50px;
+	}
+
+	#query{
+		font-size: 20px;
+		width: 600px;
+	}
+
+	#search_div{
+		width: 800px;
+    	margin: 0 auto;
+	}
+
+	.result_div{
+		margin: 5px; 
+		padding: 5px; 
+		width: 45%; 
+		float: left;
+		background-color: #fff;
+	}
+
+</style>
+
+<div id="search_div">
+	<label>Elastic Search vs. Evergreen Search</label>
 	<input id="query"></input>
 	<a onclick="get_results()" style="color: #fff; padding: 5px; background-color: #000;">Search</a>
-<form>
+</div>
 <div style="clear: both"></div>
-<div style="margin: 5px; padding: 5px; border: 1px #000 solid; width: 45%; float: left;">
-	<h2 style="margin: 5px;">Elastic Results:</h2>
+<div class="result_div">
+	<h2 style="margin: 5px;">Elastic Results: <span id="elastic_time"></span></h2>
 	<div id="elastic_results"></div>
 </div>
-<div style="margin: 5px; padding: 5px; border: 1px #000 solid; width: 45%; float: right;">
-	<h2 style="margin: 5px;">Evergreen Results:</h2>
+<div class="result_div">
+	<h2 style="margin: 5px;">Evergreen Results: <span id="eg_time"></h2>
+	<div id="eg_results"></div>
 </div>
 <div style="clear: both"></div>
 
 
 <script>
 function get_results(){
+	$('#elastic_time').html('')
+	$('#elastic_results').html('')
+	$('#eg_time').html('')
+	$('#eg_results').html('')
+
 	var query = $('#query').val()
-	var time_start = Date.now();
+	var time_start = new Date().getTime();
 	get_egresults(query, time_start);
 	get_elastic(query, time_start);
 }
 
 function get_egresults(query, time_start){
-	alert('eg')
+	$.get('https://ilscatcher3.herokuapp.com/mock/search.json?query=' + query).done(function(data){
+		var time_end = new Date().getTime();
+		var total_time = time_end - time_start
+		$('#eg_time').html(total_time + 'ms')
+		$.each(data, function(i, result){
+			var title = result.title
+			var author = result.author
+			var image = '<img class="cover_image" src="http://catalog.tadl.org/opac/extras/ac/jacket/large/r/' + result.id +'">'
+			var listing = '<p>' + image + title + ' - ' + author + '</p>' 
+			$('#eg_results').append(listing)
+		});
+	});
 }
 
 function get_elastic(query, time_start){
-	alert(query)
 	$.get('http://elastic-evergreen.herokuapp.com/main/index.json?query=' + query).done(function(data){
+		var time_end = new Date().getTime();
+		var total_time = time_end - time_start
+		$('#elastic_time').html(total_time + 'ms')
 		$.each(data, function(i, result){
-			$('#elastic_results').append(result.title)
+			var title = result.title
+			var author = result.author
+			var image = '<img class="cover_image" src="http://catalog.tadl.org/opac/extras/ac/jacket/large/r/' + result.id +'">'
+			var listing = '<p>' + image + title + ' - ' + author + '</p>' 
+			$('#elastic_results').append(listing)
 		});
 	});
-
 }
 
 </script>

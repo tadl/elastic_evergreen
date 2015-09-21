@@ -20,7 +20,7 @@ class MainController < ApplicationController
             {
               multi_match: {
                 query: search_term,
-                fields: ['title^3','author^4', 'abstract'],
+                fields: ['title^3','author^2', 'abstract'],
                 fuzziness: 2
               }
             }
@@ -28,7 +28,8 @@ class MainController < ApplicationController
         }
       },
       size: 24,
-      from: 0
+      from: 0,
+      min_score: 0.4
   	elsif search_type == 'author'
         # response = Record.search query: {match: { author: {query: author, fuzziness: 1} } }
         response = Record.search min_score: 0.1, query: {bool:{ should:[{match: {author: search_term}}, {match_phrase: {author: search_term}}, {fuzzy: {author: search_term}}]}}
