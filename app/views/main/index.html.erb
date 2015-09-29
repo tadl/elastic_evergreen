@@ -70,23 +70,25 @@ function get_egresults(query, time_start){
 		$.each(data, function(i, result){
 			var title = result.title
 			var author = result.author
+			var id = result.id
 			var image = '<img class="cover_image" src="https://catalog.tadl.org/opac/extras/ac/jacket/large/r/' + result.id +'">'
-			var listing = '<p>' + image + title + ' - ' + author + '</p>' 
+			var listing = '<p>' + image + title + ' - ' + author + ' - ' + id + '</p>' 
 			$('#eg_results').append(listing)
 		});
 	});
 }
 
 function get_elastic(query, time_start){
-	$.get('https://elastic-evergreen.herokuapp.com/main/index.json?query=' + query).done(function(data){
+	$.get('?query=' + query + '&format=json').done(function(data){
 		var time_end = new Date().getTime();
 		var total_time = time_end - time_start
 		$('#elastic_time').html(total_time + 'ms')
 		$.each(data, function(i, result){
 			var title = result.title
 			var author = result.author
+			var id = result.id
 			var image = '<img class="cover_image" src="https://catalog.tadl.org/opac/extras/ac/jacket/large/r/' + result.id +'">'
-			var listing = '<p>' + image + title + ' - ' + author + '</p>' 
+			var listing = '<p>' + image + title + ' - ' + author + ' - ' + id + '</p>' 
 			$('#elastic_results').append(listing)
 		});
 	});
