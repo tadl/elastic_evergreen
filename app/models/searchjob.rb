@@ -58,7 +58,7 @@ class Searchjob
           ]
         }
       },
-      size: 50,
+      size: 1000,
       from: 0,
       min_score: 0.3
     return massage_response(results)
