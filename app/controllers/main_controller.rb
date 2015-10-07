@@ -4,9 +4,14 @@ class MainController < ApplicationController
   def index
   	search_term = URI.unescape(params[:query]) rescue ''
   	search_type = params[:search_type] rescue nil
+    if params[:page]
+      page = page.to_i * 60
+    else
+      page = 0
+    end
     search_job = Searchjob.new
     if search_type.nil? || search_type == 'keyword'
-    	response = search_job.keyword(search_term)
+    	response = search_job.keyword(search_term, page)
   	elsif search_type == 'author'
       response = search_job.author(search_term)
   	elsif search_type == 'title'
