@@ -21,7 +21,8 @@ class Searchjob
                 fuzziness: 2
               }
             },
-            multi_match: {
+            {
+              multi_match: {
                 type: 'most_fields',
                 query: search_term,
                 fields: ['subjects','genres','series'],
@@ -29,7 +30,8 @@ class Searchjob
                 fuzziness: 1
               }
             },
-            multi_match: {
+            {
+              multi_match: {
                 type: 'best_fields',
                 query: search_term,
                 fields: ['abstract', 'contents'],
