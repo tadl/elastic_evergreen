@@ -9,7 +9,7 @@ class Searchjob
                 type: 'most_fields', 
                 query: search_term, 
                 fields: ['title', 'title.folded','author'],
-                boost: 3
+                boost: 5
               }
             },
             {
@@ -17,7 +17,22 @@ class Searchjob
                 type: 'best_fields', 
                 query: search_term, 
                 fields: ['title', 'title.folded', 'author'],
+                boost: 3,
+                fuzziness: 2
+              }
+            },
+            multi_match: {
+                type: 'most_fields',
+                query: search_term,
+                fields: ['subjects','genres','series'],
                 boost: 2,
+                fuzziness: 1
+              }
+            },
+            multi_match: {
+                type: 'best_fields',
+                query: search_term,
+                fields: ['abstract', 'contents'],
                 fuzziness: 1
               }
             }
@@ -58,7 +73,7 @@ class Searchjob
           ]
         }
       },
-      size: 121,
+      size: 61,
       from: 0,
       min_score: 0.3
     return massage_response(results)
