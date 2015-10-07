@@ -8,8 +8,8 @@ class Searchjob
               multi_match: {
                 type: 'most_fields', 
                 query: search_term, 
-                fields: ['title', 'title.folded','author'],
-                boost: 5
+                fields: ['title', 'title.folded','author','subjects','genres','series','abstract', 'contents'],
+                boost: 3
               }
             },
             {
@@ -77,7 +77,7 @@ class Searchjob
       },
       size: 61,
       from: page,
-      min_score: 0.3
+      min_score: 0.1
     return massage_response(results)
   end
 
