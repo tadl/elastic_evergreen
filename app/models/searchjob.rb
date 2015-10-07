@@ -1,5 +1,5 @@
 class Searchjob
-  def keyword(search_term, page = 0)
+  def keyword(search_term, page)
     results = Record.search query: 
       {
         bool:{ 
