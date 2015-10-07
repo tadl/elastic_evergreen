@@ -5,7 +5,7 @@ class MainController < ApplicationController
   	search_term = URI.unescape(params[:query]) rescue ''
   	search_type = params[:search_type] rescue nil
     if params[:page]
-      page = params[:page].to_i * 60
+      page = params[:page].to_i * 48
     else
       page = 0
     end
