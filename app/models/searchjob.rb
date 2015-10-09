@@ -123,7 +123,7 @@ class Searchjob
         multi_match: {
           type: 'most_fields', 
           query: search_term, 
-          fields: ['subjects','genres','series'],
+          fields: ['subjects','genres'],
           fuzziness: 1
         } 
       },
