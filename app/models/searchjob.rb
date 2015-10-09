@@ -101,15 +101,19 @@ class Searchjob
     return massage_response(results)
   end
 
-  def title(search_term)
+  def title(search_term, page)
     results = Record.search query: 
       {
         multi_match: {
           type: 'most_fields', 
           query: search_term, 
-          fields: ['title', 'title.folded']
+          fields: ['title', 'title.folded'],
+          fuzziness: 1
         } 
-      }
+      },
+      size: 49,
+      from: page,
+      min_score: 0.3
     return massage_response(results)
   end
 
