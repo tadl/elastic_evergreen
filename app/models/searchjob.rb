@@ -121,7 +121,7 @@ class Searchjob
     results = Record.search query: 
       {
         match: {
-          subject: search_term,
+          "subject": search_term,
           fuzziness: 1
         } 
       },
