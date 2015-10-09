@@ -121,10 +121,10 @@ class Searchjob
     results = Record.search query: 
       {
         match: {
-          "subject": search_term,
-          fuzziness: 1
+          "subject": search_term
         } 
       },
+      fuzziness: 1,
       size: 49,
       from: page,
       min_score: 0.1
