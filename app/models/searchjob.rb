@@ -120,11 +120,9 @@ class Searchjob
   def subject(search_term, page)
     results = Record.search query: 
       {
-        multi_match: {
-          type: 'most_fields', 
-          query: search_term, 
-          fields: ['subjects'],
-          fuzziness: 2
+        match: {
+          subject: search_term,
+          fuzziness: 1
         } 
       },
       size: 49,
