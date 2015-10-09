@@ -121,10 +121,10 @@ class Searchjob
     results = Record.search query: 
       {
         multi_match: {
-          type: 'most_fields', 
+          type: 'best_fields', 
           query: search_term, 
           fields: ['subjects','genres'],
-          fuzziness: 1
+          fuzziness: 2
         } 
       },
       size: 49,
