@@ -124,12 +124,12 @@ class Searchjob
           type: 'most_fields', 
           query: search_term, 
           fields: ['subjects'],
-          fuzziness: 1
+          fuzziness: 2
         } 
       },
       size: 49,
       from: page,
-      min_score: 0.3
+      min_score: 0.1
     return massage_response(results)
   end
 
