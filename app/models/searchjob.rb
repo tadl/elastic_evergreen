@@ -81,7 +81,7 @@ class Searchjob
     return massage_response(results)
   end
 
-  def author(search_term)
+  def author(search_term, page)
     results = Record.search query: 
     {
       bool:{ 
@@ -95,7 +95,8 @@ class Searchjob
         ]
       }
     },
-    size: 24,
+    size: 49,
+    from: page,
     min_score: 0.3
     return massage_response(results)
   end

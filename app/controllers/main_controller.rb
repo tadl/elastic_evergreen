@@ -13,7 +13,7 @@ class MainController < ApplicationController
     if search_type.nil? || search_type == 'keyword'
     	response = search_job.keyword(search_term, page)
   	elsif search_type == 'author'
-      response = search_job.author(search_term)
+      response = search_job.author(search_term, page)
   	elsif search_type == 'title'
       response = search_job.title(search_term)
     elsif search_type == 'record_id'
