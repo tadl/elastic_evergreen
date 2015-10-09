@@ -127,15 +127,7 @@ class Searchjob
               {subject: search_term}}, 
               {match_phrase: {subjects: search_term}}, 
               {fuzzy: {subjects: search_term},
-          },
-          {
-            multi_match: {
-                type: 'best_fields',
-                query: search_term,
-                fields: ['abstract', 'contents'],
-                fuzziness: 1
-              }
-            }
+          }
         ]
       }
     },
