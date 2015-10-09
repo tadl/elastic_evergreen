@@ -16,6 +16,8 @@ class MainController < ApplicationController
       response = search_job.author(search_term, page)
   	elsif search_type == 'title'
       response = search_job.title(search_term, page)
+    elsif search_type == 'subject'
+      response = search_job.subject(search_term, page)
     elsif search_type == 'record_id'
       response = search_job.record_id(search_term)
   	end
