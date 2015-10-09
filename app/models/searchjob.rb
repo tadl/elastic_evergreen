@@ -1,5 +1,5 @@
 class Searchjob
-  def keyword(search_term, page)
+  def keyword(search_term, page, available)
     results = Record.search query: 
       {
         bool:{ 
@@ -38,50 +38,19 @@ class Searchjob
                 fuzziness: 1
               }
             }
-            # {
-            #   multi_match: {
-            #     type: 'best_fields', 
-            #     query: search_term, 
-            #     fields: ['author'],
-            #     boost: 2,
-            #   }
-            # }
-            # {
-            #   multi_match: {
-            #     type: 'phrase', 
-            #     query: search_term, 
-            #     fields: ['title', 'title.folded'],
-            #     fuzziness: 1,
-            #   }
-            # },
-   
-            # {
-            #   match_phrase: {
-            #     author: search_term
-            #   }
-            # }, 
-            # {
-            #   fuzzy: {
-            #     author: search_term
-            #   }
-            # },
-            # {
-            #   multi_match: {
-            #     query: search_term,
-            #     fields: ['abstract','author'],
-            #     fuzziness: 2
-            #   }
-            # }
           ]
         }
       },
+      filter: {
+        term: ({"holdings.status": "Available"} if available == 'true')
+      }.reject { |k, v| v.nil? },
       size: 49,
       from: page,
       min_score: 0.1
     return massage_response(results)
   end
 
-  def author(search_term, page)
+  def author(search_term, page, available)
     results = Record.search query: 
     {
       bool:{ 
@@ -95,13 +64,16 @@ class Searchjob
         ]
       }
     },
+    filter: {
+      term: ({"holdings.status": "Available"} if available == 'true')
+    }.reject { |k, v| v.nil? },
     size: 49,
     from: page,
     min_score: 0.3
     return massage_response(results)
   end
 
-  def title(search_term, page)
+  def title(search_term, page, available)
     results = Record.search query: 
       {
         multi_match: {
@@ -111,26 +83,31 @@ class Searchjob
           fuzziness: 1
         } 
       },
+      filter: {
+        term: ({"holdings.status": "Available"} if available == 'true')
+      }.reject { |k, v| v.nil? },
       size: 49,
       from: page,
       min_score: 0.3
     return massage_response(results)
   end
 
-  def subject(search_term, page)
+  def subject(search_term, page, available)
     results = Record.search query: 
     {
       bool:{ 
         should:[
           {
             match: 
-              {subject: search_term}}, 
-              {match_phrase: {subjects: search_term}}, 
+              {subjects: search_term}}, 
               {fuzzy: {subjects: search_term},
           }
         ]
       }
     },
+    filter: {
+      term: ({"holdings.status": "Available"} if available == 'true')
+    }.reject { |k, v| v.nil? },
     size: 49,
     from: page,
     min_score: 0.3
