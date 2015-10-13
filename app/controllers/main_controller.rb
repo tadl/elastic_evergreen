@@ -5,23 +5,17 @@ class MainController < ApplicationController
   	search_term = URI.unescape(params[:query]) rescue ''
   	search_type = params[:search_type] rescue nil
     available = params[:available] rescue false
+    subjects = params[:subjects] rescue nil
+    genres = params[:genres] rescue nil
+    series = params[:series] rescue nil
+    authors = params[:authors] rescue nil
     if params[:page]
       page = params[:page].to_i * 48
     else
       page = 0
     end
     search_job = Searchjob.new
-    if search_type.nil? || search_type == 'keyword'
-    	response = search_job.keyword(search_term, page, available)
-  	elsif search_type == 'author'
-      response = search_job.author(search_term, page, available)
-  	elsif search_type == 'title'
-      response = search_job.title(search_term, page, available)
-    elsif search_type == 'subject'
-      response = search_job.subject(search_term, page, available)
-    elsif search_type == 'record_id'
-      response = search_job.record_id(search_term)
-  	end
+    response = search_job.get_results(search_term, search_type, page, available, subjects, genres, series, authors)
   	respond_to do |format|
       format.html
       format.json {render json: response}

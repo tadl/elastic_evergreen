@@ -1,8 +1,30 @@
 class Searchjob
-  def keyword(search_term, page, available)
-    results = Record.search query: 
-      {
-        bool:{ 
+  
+  def get_results(search_term, search_type, page, available, subjects, genres, series, authors)
+    if search_type.nil? || search_type == 'keyword'
+      search_scheme = self.keyword(search_term)
+    elsif search_type == 'author'
+      search_scheme = self.author(search_term)
+    elsif search_type == 'title'
+      search_scheme = self.title(search_term)
+    elsif search_type == 'subject'
+      search_scheme = self.subject(search_term)
+    end
+    filters = test = process_filters(available, subjects, genres, series, authors)
+    results = Record.search query: {
+        bool: search_scheme
+      },
+      filter:{
+        bool: filters
+      },
+      size: 49,
+      from: page,
+      min_score: 0.1
+      return massage_response(results)
+  end
+
+  def keyword(search_term)
+    search_scheme = { 
           should:[ 
             {
               multi_match: {
@@ -40,21 +62,12 @@ class Searchjob
             }
           ]
         }
-      },
-      filter: {
-        term: ({"holdings.status": "Available"} if available == 'true')
-      }.reject { |k, v| v.nil? },
-      size: 49,
-      from: page,
-      min_score: 0.1
-    return massage_response(results)
+    return search_scheme
   end
 
-  def author(search_term, page, available)
-    results = Record.search query: 
-    {
-      bool:{ 
-        should:[
+  def author(search_term)
+       search_scheme = { 
+          should:[ 
           {
             match: 
               {author: search_term}}, 
@@ -63,40 +76,28 @@ class Searchjob
           }
         ]
       }
-    },
-    filter: {
-      term: ({"holdings.status": "Available"} if available == 'true')
-    }.reject { |k, v| v.nil? },
-    size: 49,
-    from: page,
-    min_score: 0.3
-    return massage_response(results)
+    return search_scheme
   end
 
-  def title(search_term, page, available)
-    results = Record.search query: 
-      {
-        multi_match: {
-          type: 'most_fields', 
-          query: search_term, 
-          fields: ['title', 'title.folded'],
-          fuzziness: 1
-        } 
-      },
-      filter: {
-        term: ({"holdings.status": "Available"} if available == 'true')
-      }.reject { |k, v| v.nil? },
-      size: 49,
-      from: page,
-      min_score: 0.3
-    return massage_response(results)
+  def title(search_term)
+    search_scheme = { 
+      should:[ 
+        {
+          multi_match: {
+            type: 'most_fields', 
+            query: search_term, 
+            fields: ['title', 'title.folded'],
+            fuzziness: 1
+          } 
+        }
+      ]
+    }
+    return search_scheme 
   end
 
-  def subject(search_term, page, available)
-    results = Record.search query: 
-    {
-      bool:{ 
-        should:[
+  def subject(search_term)
+   search_scheme = { 
+      should:[ 
           {
             match: 
               {subjects: search_term}}, 
@@ -104,14 +105,7 @@ class Searchjob
           }
         ]
       }
-    },
-    filter: {
-      term: ({"holdings.status": "Available"} if available == 'true')
-    }.reject { |k, v| v.nil? },
-    size: 49,
-    from: page,
-    min_score: 0.3
-    return massage_response(results)
+    return search_scheme
   end
 
   def record_id(search_term)
@@ -131,5 +125,31 @@ class Searchjob
       record
     end
     return massaged_response
+  end
+
+  def process_filters(available, subjects, genres, series, authors)
+    filters = Array.new
+    if available == 'true'
+      filters = filters.push({:term => {"holdings.status": "Available"}})
+    end
+
+    subjects.each do |s|
+      filters = filters.push({:term => {"subjects.raw": s}})
+    end unless subjects.nil?
+
+    genres.each do |s|
+      filters = filters.push({:term => {"genres.raw": s}})
+    end unless genres.nil?
+
+    series.each do |s|
+      filters = filters.push({:term => {"series.raw": s}})
+    end unless series.nil?
+
+    authors.each do |s|
+      filters = filters.push({:term => {"author.raw": s}})
+    end unless authors.nil?
+
+    filters_hash = {:must => filters}
+    return filters_hash
   end
 end
