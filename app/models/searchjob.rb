@@ -1,6 +1,6 @@
 class Searchjob
   
-  def get_results(search_term, search_type, page, available, subjects, genres, series, authors)
+  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
     elsif search_type == 'author'
@@ -10,7 +10,7 @@ class Searchjob
     elsif search_type == 'subject'
       search_scheme = self.subject(search_term)
     end
-    filters = test = process_filters(available, subjects, genres, series, authors)
+    filters = test = process_filters(available, subjects, genres, series, authors, format_type)
     results = Record.search query: {
         bool: search_scheme
       },
@@ -127,7 +127,7 @@ class Searchjob
     return massaged_response
   end
 
-  def process_filters(available, subjects, genres, series, authors)
+  def process_filters(available, subjects, genres, series, authors, format_type)
     filters = Array.new
     if available == 'true'
       filters = filters.push({:term => {"holdings.status": "Available"}})
@@ -149,7 +149,27 @@ class Searchjob
       filters = filters.push({:term => {"author.raw": s}})
     end unless authors.nil?
 
-    filters_hash = {:must => filters}
+    format_lock = Array.new
+
+    desired_formats = code_to_formats(format_type)
+    desired_formats.each do |f|
+      format_lock = format_lock.push({:term => {'type_of_resource': f}})
+    end
+
+
+    filters_hash = {:must => filters, :should => format_lock}
     return filters_hash
   end
+
+  def code_to_formats(format_code)
+    if format_code == 'a'
+      formats = ['text', 'kit', 'sound recording-nonmusical', 'cartographic']
+    elsif format_code == 'g'
+      formats = ['moving image']
+    elsif format_code == 'j'
+      formats = ['sound recording-musical']
+    end
+    return formats rescue nil 
+  end
+
 end
