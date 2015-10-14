@@ -162,6 +162,7 @@ class Searchjob
   end
 
   def code_to_formats(format_code)
+    formats = Array.new
     if format_code == 'a'
       formats = ['text', 'kit', 'sound recording-nonmusical', 'cartographic']
     elsif format_code == 'g'
@@ -169,7 +170,7 @@ class Searchjob
     elsif format_code == 'j'
       formats = ['sound recording-musical']
     end
-    return formats rescue nil 
+    return formats 
   end
 
 end
