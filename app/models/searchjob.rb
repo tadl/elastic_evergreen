@@ -19,7 +19,7 @@ class Searchjob
       },
       size: 49,
       from: page,
-      min_score: 0.1
+      min_score: 0.01
       return massage_response(results)
   end
 
@@ -39,7 +39,6 @@ class Searchjob
                 type: 'best_fields', 
                 query: search_term, 
                 fields: ['title', 'title.folded', 'author'],
-                boost: 3,
                 fuzziness: 2
               }
             },
@@ -48,8 +47,8 @@ class Searchjob
                 type: 'most_fields',
                 query: search_term,
                 fields: ['subjects','genres','series'],
-                boost: 2,
-                fuzziness: 1
+                boost: 1,
+                fuzziness: 2
               }
             },
             {
@@ -57,6 +56,7 @@ class Searchjob
                 type: 'best_fields',
                 query: search_term,
                 fields: ['abstract', 'contents'],
+                boost: 1,
                 fuzziness: 1
               }
             }
