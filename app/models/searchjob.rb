@@ -1,6 +1,6 @@
 class Searchjob
   
-  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors)
+  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
     elsif search_type == 'author'
@@ -10,7 +10,7 @@ class Searchjob
     elsif search_type == 'subject'
       search_scheme = self.subject(search_term)
     end
-    filters = test = process_filters(available, subjects, genres, series, authors, format_type)
+    filters = test = process_filters(available, subjects, genres, series, authors, format_type, location_code)
     results = Record.search query: {
         bool: search_scheme
       },
@@ -127,7 +127,7 @@ class Searchjob
     return massaged_response
   end
 
-  def process_filters(available, subjects, genres, series, authors, format_type)
+  def process_filters(available, subjects, genres, series, authors, format_type, location_code)
     filters = Array.new
     if available == 'true'
       filters = filters.push({:term => {"holdings.status": "Available"}})
@@ -148,6 +148,13 @@ class Searchjob
     authors.each do |s|
       filters = filters.push({:term => {"author.raw": s}})
     end unless authors.nil?
+
+    if location_code && location_code != '' && !location_code.nil?
+      location = code_to_location(location_code)
+      if location != ''
+        filters = filters.push({:term => {"holdings.circ_lib": location}})
+      end
+    end
 
     format_lock = Array.new
 
@@ -171,6 +178,26 @@ class Searchjob
       formats = ['sound recording-musical']
     end
     return formats 
+  end
+
+  def code_to_location(location_code)
+    location = ''
+    if location_code == '22' || location = nil
+      location = ''
+    elsif location_code == '23'
+      location = 'TADL-WOOD'
+    elsif location_code == '24'
+      location = 'TADL-IPL'
+    elsif location_code == '25'
+      location = 'TADL=KBL'
+    elsif location_code == '26'
+      location = 'TADL-PCL'
+    elsif location_code == '27'
+      location = 'TADL-FLPL'
+    elsif location_code == '28'
+      location = 'TADL-EBB'
+    end
+    return location 
   end
 
 end
