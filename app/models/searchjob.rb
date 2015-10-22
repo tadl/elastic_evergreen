@@ -1,5 +1,5 @@
 class Searchjob
-  
+
   def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
@@ -17,27 +17,27 @@ class Searchjob
       filter:{
         bool: filters
       },
-      size: 49,
+      size: 25,
       from: page,
       min_score: 0.01
       return massage_response(results)
   end
 
   def keyword(search_term)
-    search_scheme = { 
-          should:[ 
+    search_scheme = {
+          should:[
             {
               multi_match: {
-                type: 'most_fields', 
-                query: search_term, 
+                type: 'most_fields',
+                query: search_term,
                 fields: ['title', 'title.folded','author','subjects','genres','series','abstract', 'contents'],
                 boost: 3
               }
             },
             {
               multi_match: {
-                type: 'best_fields', 
-                query: search_term, 
+                type: 'best_fields',
+                query: search_term,
                 fields: ['title', 'title.folded', 'author'],
                 fuzziness: 2
               }
@@ -66,12 +66,12 @@ class Searchjob
   end
 
   def author(search_term)
-       search_scheme = { 
-          should:[ 
+       search_scheme = {
+          should:[
           {
-            match: 
-              {author: search_term}}, 
-              {match_phrase: {author: search_term}}, 
+            match:
+              {author: search_term}},
+              {match_phrase: {author: search_term}},
               {fuzzy: {author: search_term},
           }
         ]
@@ -80,27 +80,35 @@ class Searchjob
   end
 
   def title(search_term)
-    search_scheme = { 
-      should:[ 
+    search_scheme = {
+      should:[
         {
           multi_match: {
-            type: 'most_fields', 
-            query: search_term, 
+            type: 'most_fields',
+            query: search_term,
+            fields: ['title', 'title.folded'],
+            boost: 3
+          }
+        },
+        {
+          multi_match: {
+            type: 'most_fields',
+            query: search_term,
             fields: ['title', 'title.folded'],
             fuzziness: 1
-          } 
+          }
         }
       ]
     }
-    return search_scheme 
+    return search_scheme
   end
 
   def subject(search_term)
-   search_scheme = { 
-      should:[ 
+   search_scheme = {
+      should:[
           {
-            match: 
-              {subjects: search_term}}, 
+            match:
+              {subjects: search_term}},
               {fuzzy: {subjects: search_term},
           }
         ]
@@ -177,7 +185,7 @@ class Searchjob
     elsif format_code == 'j'
       formats = ['sound recording-musical']
     end
-    return formats 
+    return formats
   end
 
   def code_to_location(location_code)
@@ -197,7 +205,7 @@ class Searchjob
     elsif location_code == '28'
       location = 'TADL-EBB'
     end
-    return location 
+    return location
   end
 
 end

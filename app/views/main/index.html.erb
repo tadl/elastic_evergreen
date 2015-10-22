@@ -23,9 +23,9 @@
 	}
 
 	.result_div{
-		margin: 5px; 
-		padding: 5px; 
-		width: 45%; 
+		margin: 5px;
+		padding: 5px;
+		width: 45%;
 		float: left;
 		background-color: #fff;
 	}
@@ -40,6 +40,7 @@
   		<option value="keyword">Keyword</option>
   		<option value="author">Author</option>
   		<option value="title">Title</option>
+			<option value="subject">Subject</option>
 	</select>
 </div>
 <div style="clear: both"></div>
@@ -60,7 +61,6 @@
         if(e.keyCode === 13){
             get_results()
         }
-
         return false;
     }
 
@@ -69,43 +69,43 @@
 		$('#elastic_results').html('')
 		$('#eg_time').html('')
 		$('#eg_results').html('')
-	
+
 		var query = $('#query').val()
 		var search_type = $('#search_type').val()
 		var time_start = new Date().getTime();
-		var elastic_params = query + '&search_type=' + search_type
+		var elastic_params = query + '&qtype=' + search_type
 		var eg_params = query + '&qtype=' + search_type
 		get_egresults(eg_params, time_start);
 		get_elastic(elastic_params, time_start);
 	}
-	
+
 	function get_egresults(params, time_start){
-		$.get('https://ilscatcher3.herokuapp.com/mock/search.json?query=' + params).done(function(data){
+		$.get('https://ilscatcher3.herokuapp.com/mock/search.json?legacy=true&query=' + params).done(function(data){
 			var time_end = new Date().getTime();
 			var total_time = time_end - time_start
 			$('#eg_time').html(total_time + 'ms')
-			$.each(data, function(i, result){
+			$.each(data.items, function(i, result){
 				var title = result.title
 				var author = result.author
 				var id = result.id
 				var image = '<img class="cover_image" src="https://catalog.tadl.org/opac/extras/ac/jacket/large/r/' + result.id +'">'
-				var listing = '<p>' + image + title + ' - ' + author + ' - ' + id + '</p>' 
+				var listing = '<p>' + image + title + ' - ' + author + ' - ' + id + '</p>'
 				$('#eg_results').append(listing)
 			});
 		});
 	}
 
 	function get_elastic(params, time_start){
-		$.get('?query=' + params + '&format=json').done(function(data){
+		$.get('https://ilscatcher3.herokuapp.com/mock/search.json?query=' + params).done(function(data){
 			var time_end = new Date().getTime();
 			var total_time = time_end - time_start
 			$('#elastic_time').html(total_time + 'ms')
-			$.each(data, function(i, result){
+			$.each(data.items, function(i, result){
 				var title = result.title
 				var author = result.author
 				var id = result.id
 				var image = '<img class="cover_image" src="https://catalog.tadl.org/opac/extras/ac/jacket/large/r/' + result.id +'">'
-				var listing = '<p>' + image + title + ' - ' + author + ' - ' + id + '</p>' 
+				var listing = '<p>' + image + title + ' - ' + author + ' - ' + id + '</p>'
 				$('#elastic_results').append(listing)
 			});
 		});

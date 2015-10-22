@@ -12,12 +12,21 @@ class MainController < ApplicationController
     format_type = params[:format_type] rescue nil
     location_code = params[:location_code] rescue nil
     if params[:page]
-      page = params[:page].to_i * 48
+      page = params[:page].to_i * 24
     else
       page = 0
     end
     search_job = Searchjob.new
-    response = search_job.get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code)
+    response = search_job.get_results(search_term,
+																			search_type,
+																			format_type,
+																			page,
+																			available,
+																			subjects,
+																			genres,
+																			series,
+																			authors,
+																			location_code)
   	respond_to do |format|
       format.html
       format.json {render json: response}
