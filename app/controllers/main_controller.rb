@@ -5,10 +5,10 @@ class MainController < ApplicationController
   	search_term = URI.unescape(params[:query]) rescue ''
   	search_type = params[:search_type] rescue nil
     available = params[:available] rescue false
-    subjects = params[:subjects] rescue nil
-    genres = params[:genres] rescue nil
-    series = params[:series] rescue nil
-    authors = params[:authors] rescue nil
+    subjects = URI.unescape(params[:subjects]) rescue nil
+    genres = URI.unescape(params[:genres]) rescue nil
+    series = URI.unescape(params[:series]) rescue nil
+    authors = URI.unescape(params[:authors]) rescue nil
     format_type = params[:format_type] rescue nil
     location_code = params[:location_code] rescue nil
     if params[:page]

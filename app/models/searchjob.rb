@@ -30,15 +30,15 @@ class Searchjob
               multi_match: {
                 type: 'best_fields',
                 query: search_term,
-                fields: ['title', 'title.folded','author','subjects','genres','series','abstract', 'contents'],
+                fields: ['title', 'title.folded','author'],
                 boost: 3
               }
             },
             {
               multi_match: {
-                type: 'most_fields',
+                type: 'best_fields',
                 query: search_term,
-                fields: ['title', 'title.folded', 'author'],
+                fields: ['title', 'title.folded', 'author', 'subjects','genres','series','abstract', 'contents'],
                 fuzziness: 2
               }
             },
@@ -190,7 +190,7 @@ class Searchjob
 
   def code_to_location(location_code)
     location = ''
-    if location_code == '22' || location = nil
+    if location_code == '22' || location == nil
       location = ''
     elsif location_code == '23'
       location = 'TADL-WOOD'
