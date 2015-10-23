@@ -142,19 +142,19 @@ class Searchjob
     end
 
     subjects.each do |s|
-      filters = filters.push({:term => {"subjects.raw": s}})
+      filters = filters.push({:term => {"subjects.raw": URI.unescape(s)}})
     end unless subjects.nil?
 
     genres.each do |s|
-      filters = filters.push({:term => {"genres.raw": s}})
+      filters = filters.push({:term => {"genres.raw": URI.unescape(s)}})
     end unless genres.nil?
 
     series.each do |s|
-      filters = filters.push({:term => {"series.raw": s}})
+      filters = filters.push({:term => {"series.raw": URI.unescape(s)}})
     end unless series.nil?
 
     authors.each do |s|
-      filters = filters.push({:term => {"author.raw": s}})
+      filters = filters.push({:term => {"author.raw": URI.unescape(s)}})
     end unless authors.nil?
 
     if location_code && location_code != '' && !location_code.nil?
