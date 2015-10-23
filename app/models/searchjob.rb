@@ -28,7 +28,7 @@ class Searchjob
           should:[
             {
               multi_match: {
-                type: 'most_fields',
+                type: 'best_fields',
                 query: search_term,
                 fields: ['title', 'title.folded','author','subjects','genres','series','abstract', 'contents'],
                 boost: 3
@@ -36,7 +36,7 @@ class Searchjob
             },
             {
               multi_match: {
-                type: 'best_fields',
+                type: 'most_fields',
                 query: search_term,
                 fields: ['title', 'title.folded', 'author'],
                 fuzziness: 2
