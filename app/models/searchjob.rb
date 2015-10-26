@@ -10,7 +10,7 @@ class Searchjob
     elsif search_type == 'subject'
       search_scheme = self.subject(search_term)
     end
-    filters = test = process_filters(available, subjects, genres, series, authors, format_type, location_code)
+    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code)
     results = Record.search query: {
         bool: search_scheme
       },
@@ -138,29 +138,29 @@ class Searchjob
   def process_filters(available, subjects, genres, series, authors, format_type, location_code)
     filters = Array.new
     if available == 'true'
-      filters = filters.push({:term => {"holdings.status": "Available"}})
+      filters.push(:term => {"holdings.status": "Available"})
     end
 
     subjects.each do |s|
-      filters = filters.push({:term => {"subjects.raw": URI.unescape(s)}})
+      filters.push(:term => {"subjects.raw": URI.unescape(s)})
     end unless subjects.nil?
 
     genres.each do |s|
-      filters = filters.push({:term => {"genres.raw": URI.unescape(s)}})
+      filters.push(:term => {"genres.raw": URI.unescape(s)})
     end unless genres.nil?
 
     series.each do |s|
-      filters = filters.push({:term => {"series.raw": URI.unescape(s)}})
+      filters.push(:term => {"series.raw": URI.unescape(s)})
     end unless series.nil?
 
     authors.each do |s|
-      filters = filters.push({:term => {"author.raw": URI.unescape(s)}})
+      filters.push(:term => {"author.raw": URI.unescape(s)})
     end unless authors.nil?
 
     if location_code && location_code != '' && !location_code.nil?
       location = code_to_location(location_code)
       if location != ''
-        filters = filters.push({:term => {"holdings.circ_lib": location}})
+        filters.push(:term => {"holdings.circ_lib": location})
       end
     end
 
@@ -168,7 +168,7 @@ class Searchjob
 
     desired_formats = code_to_formats(format_type)
     desired_formats.each do |f|
-      format_lock = format_lock.push({:term => {'type_of_resource': f}})
+      format_lock.push(:term => {'type_of_resource': f})
     end
 
 
