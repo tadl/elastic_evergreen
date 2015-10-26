@@ -197,7 +197,7 @@ class Searchjob
     elsif location_code == '24'
       location = 'TADL-IPL'
     elsif location_code == '25'
-      location = 'TADL=KBL'
+      location = 'TADL-KBL'
     elsif location_code == '26'
       location = 'TADL-PCL'
     elsif location_code == '27'
