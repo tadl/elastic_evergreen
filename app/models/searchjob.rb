@@ -36,10 +36,11 @@ class Searchjob
             },
             {
               multi_match: {
-                type: 'best_fields',
+                type: 'most_fields',
                 query: search_term,
                 fields: ['title', 'title.folded', 'author', 'subjects','genres','series','abstract', 'contents'],
-                fuzziness: 2
+                fuzziness: 2,
+                boost: 2
               }
             },
             {
