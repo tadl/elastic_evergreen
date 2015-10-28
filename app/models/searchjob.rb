@@ -28,28 +28,54 @@ class Searchjob
           should:[
             {
               multi_match: {
-                type: 'best_fields',
+                type: 'phrase',
                 query: search_term,
-                fields: ['title', 'title.folded','author'],
-                boost: 3
+                fields: ['title', 'title.raw', 'title.folded', 'series', 'series.raw'],
+                boost: 5,
               }
             },
             {
               multi_match: {
-                type: 'most_fields',
+                type: 'best_fields',
                 query: search_term,
-                fields: ['title', 'title.folded', 'author', 'subjects','genres','series','abstract', 'contents'],
-                fuzziness: 2,
+                fields: ['title', 'title.raw', 'title.folded', 'series', 'series.raw'],
+                fuzziness: 1,
                 boost: 2
               }
             },
             {
               multi_match: {
-                type: 'most_fields',
+                type: 'phrase',
                 query: search_term,
-                fields: ['subjects','genres','series'],
+                fields: ['author', 'author.raw'],
+                boost: 3,
+              }
+            },
+            {
+              multi_match: {
+                type: 'best_fields',
+                query: search_term,
+                fields: ['title', 'title.raw', 'title.folded'],
                 boost: 1,
-                fuzziness: 2
+                fuzziness: 1
+              }
+            },
+            {
+              multi_match: {
+                type: 'best_fields',
+                query: search_term,
+                fields: ['author', 'author.raw'],
+                boost: 3,
+                fuzziness: 1
+              }
+            },
+            {
+              multi_match: {
+                type: 'best_fields',
+                query: search_term,
+                fields: ['subjects','genres', 'abstract', 'contents'],
+                fuzziness: 2,
+                boost: 2
               }
             },
             {
@@ -57,7 +83,7 @@ class Searchjob
                 type: 'best_fields',
                 query: search_term,
                 fields: ['abstract', 'contents'],
-                boost: 1,
+                boost: 2,
                 fuzziness: 1
               }
             }
