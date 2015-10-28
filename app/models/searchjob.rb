@@ -30,7 +30,7 @@ class Searchjob
               multi_match: {
                 type: 'phrase',
                 query: search_term,
-                fields: ['title', 'title.raw', 'title.folded', 'series', 'series.raw'],
+                fields: ['title', 'title.folded'],
                 boost: 5,
               }
             },
@@ -38,7 +38,15 @@ class Searchjob
               multi_match: {
                 type: 'best_fields',
                 query: search_term,
-                fields: ['title', 'title.raw', 'title.folded', 'series', 'series.raw'],
+                fields: ['series', 'series.raw'],
+                boost: 5,
+              }
+            },
+            {
+              multi_match: {
+                type: 'best_fields',
+                query: search_term,
+                fields: ['title', 'title.folded', 'series', 'series.raw'],
                 fuzziness: 1,
                 boost: 2
               }
@@ -55,7 +63,7 @@ class Searchjob
               multi_match: {
                 type: 'best_fields',
                 query: search_term,
-                fields: ['title', 'title.raw', 'title.folded'],
+                fields: ['title', 'title.folded'],
                 boost: 1,
                 fuzziness: 1
               }
@@ -75,7 +83,7 @@ class Searchjob
                 query: search_term,
                 fields: ['subjects','genres', 'abstract', 'contents'],
                 fuzziness: 2,
-                boost: 2
+                boost: 1
               }
             },
             {
@@ -83,7 +91,7 @@ class Searchjob
                 type: 'best_fields',
                 query: search_term,
                 fields: ['abstract', 'contents'],
-                boost: 2,
+                boost: 1,
                 fuzziness: 1
               }
             }
