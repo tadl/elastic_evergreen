@@ -53,10 +53,10 @@ class Searchjob
             },
             {
               multi_match: {
-                type: 'phrase',
+                type: 'best_fields',
                 query: search_term,
                 fields: ['author', 'author.raw'],
-                boost: 3,
+                boost: 4,
               }
             },
             {
@@ -73,7 +73,7 @@ class Searchjob
                 type: 'best_fields',
                 query: search_term,
                 fields: ['author', 'author.raw'],
-                boost: 3,
+                boost: 1,
                 fuzziness: 1
               }
             },
