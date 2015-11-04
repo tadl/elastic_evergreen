@@ -1,6 +1,6 @@
 class Searchjob
 
-  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code)
+  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, sort)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
     elsif search_type == 'author'
@@ -11,12 +11,14 @@ class Searchjob
       search_scheme = self.subject(search_term)
     end
     filters = process_filters(available, subjects, genres, series, authors, format_type, location_code)
+    sort_type = get_sort_type(sort)
     results = Record.search query: {
         bool: search_scheme
       },
       filter:{
         bool: filters
       },
+      sort: sort_type,
       size: 25,
       from: page,
       min_score: 0.01
@@ -241,6 +243,27 @@ class Searchjob
       location = 'TADL-EBB'
     end
     return location
+  end
+
+  def get_sort_type(sort)
+    sort_type = Array.new
+    if sort == nil || sort == '' || sort == 'relevancy'
+      sort_type.push("_score")
+      sort_type.push({ "author.raw": "asc" })
+      sort_type.push({ "title.raw": "asc" })
+    else
+      if sort == 'titleAZ'
+        sort_type.push({ "title.raw": "asc" })
+      elsif sort == 'titleZA'
+        sort_type.push({ "title.raw": "desc" })
+      elsif sort == 'AuthorAZ'
+        sort_type.push({ "author.raw": "asc" })
+      elsif sort == 'AuthorZA'
+        sort_type.push({ "author.raw": "desc" })
+      end
+      sort_type.push("_score")
+    end
+    return sort_type
   end
 
 end

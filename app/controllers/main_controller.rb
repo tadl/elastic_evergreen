@@ -11,6 +11,7 @@ class MainController < ApplicationController
     authors = params[:authors] rescue nil
     format_type = params[:format_type] rescue nil
     location_code = params[:location_code] rescue nil
+    sort = params[:sort]  rescue nil
     if params[:page]
       page = params[:page].to_i * 24
     else
@@ -26,7 +27,8 @@ class MainController < ApplicationController
 																			genres,
 																			series,
 																			authors,
-																			location_code)
+																			location_code,
+                                      sort)
   	respond_to do |format|
       format.html
       format.json {render json: response}
