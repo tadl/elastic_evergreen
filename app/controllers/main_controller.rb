@@ -12,6 +12,7 @@ class MainController < ApplicationController
     format_type = params[:format_type] rescue nil
     location_code = params[:location_code] rescue nil
     sort = params[:sort]  rescue nil
+    shelving_location = params[:shelving_location] rescue nil
     if params[:page]
       page = params[:page].to_i * 24
     else
@@ -28,6 +29,7 @@ class MainController < ApplicationController
 																			series,
 																			authors,
 																			location_code,
+                                      shelving_location,
                                       sort)
   	respond_to do |format|
       format.html

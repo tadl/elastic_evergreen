@@ -1,16 +1,20 @@
 class Searchjob
 
-  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, sort)
+  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
+      min_score = 0.01
     elsif search_type == 'author'
       search_scheme = self.author(search_term)
+      min_score = 0.01
     elsif search_type == 'title'
       search_scheme = self.title(search_term)
+      min_score = 1
     elsif search_type == 'subject'
       search_scheme = self.subject(search_term)
+      min_score = 1
     end
-    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code)
+    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
     sort_type = get_sort_type(sort)
     results = Record.search query: {
         bool: search_scheme
@@ -21,7 +25,7 @@ class Searchjob
       sort: sort_type,
       size: 25,
       from: page,
-      min_score: 0.01
+      min_score: min_score
       return massage_response(results)
   end
 
@@ -33,7 +37,7 @@ class Searchjob
                 type: 'phrase',
                 query: search_term,
                 fields: ['title', 'title.folded'],
-                boost: 5,
+                boost: 8,
               }
             },
             {
@@ -41,24 +45,23 @@ class Searchjob
                 type: 'best_fields',
                 query: search_term,
                 fields: ['series', 'series.raw'],
-                boost: 5,
+                boost: 6,
               }
             },
             {
               multi_match: {
                 type: 'best_fields',
                 query: search_term,
-                fields: ['title', 'title.folded', 'series', 'series.raw'],
-                fuzziness: 1,
-                boost: 2
+                fields: ['title', 'title.folded'],
+                boost: 8
               }
             },
             {
               multi_match: {
-                type: 'best_fields',
+                type: 'most_fields',
                 query: search_term,
-                fields: ['author', 'author.raw'],
-                boost: 4,
+                fields: ['author', 'author.raw', 'author_other'],
+                boost: 7,
               }
             },
             {
@@ -74,18 +77,17 @@ class Searchjob
               multi_match: {
                 type: 'best_fields',
                 query: search_term,
-                fields: ['author', 'author.raw'],
+                fields: ['author', 'author.raw', 'author_other'],
                 boost: 1,
                 fuzziness: 1
               }
             },
             {
               multi_match: {
-                type: 'best_fields',
+                type: 'most_fields',
                 query: search_term,
                 fields: ['subjects','genres', 'abstract', 'contents'],
-                fuzziness: 2,
-                boost: 1
+                boost: 10
               }
             },
             {
@@ -105,12 +107,18 @@ class Searchjob
   def author(search_term)
        search_scheme = {
           should:[
-          {
-            match:
-              {author: search_term}},
-              {match_phrase: {author: search_term}},
-              {fuzzy: {author: search_term},
-          }
+            multi_match: {
+              type: 'best_fields',
+              query: search_term,
+              fields: ['author', 'author_other'],
+              boost: 3
+          },
+           multi_match: {
+              type: 'best_fields',
+              query: search_term,
+              fields: ['author', 'author_other'],
+              fuzziness: 1
+          },
         ]
       }
     return search_scheme
@@ -172,7 +180,7 @@ class Searchjob
     return massaged_response
   end
 
-  def process_filters(available, subjects, genres, series, authors, format_type, location_code)
+  def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
     filters = Array.new
     if available == 'true'
       filters.push(:term => {"holdings.status": "Available"})
@@ -193,6 +201,10 @@ class Searchjob
     authors.each do |s|
       filters.push(:term => {"author.raw": URI.unescape(s)})
     end unless authors.nil?
+
+    shelving_location.each do |s|
+      filters.push(:term => {"holdings.location_id": shelving_location})
+    end unless shelving_location.nil?
 
     if location_code && location_code != '' && !location_code.nil?
       location = code_to_location(location_code)
@@ -260,6 +272,18 @@ class Searchjob
         sort_type.push({ "author.raw": "asc" })
       elsif sort == 'AuthorZA'
         sort_type.push({ "author.raw": "desc" })
+      elsif sort == 'createDESC'
+        sort_type.push({"create_date": "desc" })
+        sort_type.push({"sort_year": "desc" })
+      elsif sort == 'createASC'
+        sort_type.push({"create_date": "asc" })
+        sort_type.push({"sort_year": "asc" })
+      elsif sort == 'pubdateDESC'
+        sort_type.push({"sort_year": "desc" })
+        sort_type.push({"create_date": "desc" }) 
+      elsif sort == 'pubdateASC'
+        sort_type.push({"sort_year": "asc" })
+        sort_type.push({"create_date": "asc" })
       end
       sort_type.push("_score")
     end

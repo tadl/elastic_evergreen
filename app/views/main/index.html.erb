@@ -96,7 +96,7 @@
 	}
 
 	function get_elastic(params, time_start){
-		$.get('https://ilscatcher3.herokuapp.com/mock/search.json?query=' + params).done(function(data){
+		$.get('http://cal.lib.tadl.org:3000/mock/search.json?query=' + params).done(function(data){
 			var time_end = new Date().getTime();
 			var total_time = time_end - time_start
 			$('#elastic_time').html(total_time + 'ms')
