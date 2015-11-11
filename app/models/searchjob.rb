@@ -6,13 +6,15 @@ class Searchjob
       min_score = 0.01
     elsif search_type == 'author'
       search_scheme = self.author(search_term)
-      min_score = 0.01
+      min_score = 0.09
     elsif search_type == 'title'
       search_scheme = self.title(search_term)
-      min_score = 1
+      min_score = 0.01
     elsif search_type == 'subject'
       search_scheme = self.subject(search_term)
-      min_score = 1
+      min_score = 0.6
+    elsif search_type == 'shelf'
+      search_scheme = self.shelf(shelving_location)
     end
     filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
     sort_type = get_sort_type(sort)
@@ -31,94 +33,50 @@ class Searchjob
 
   def keyword(search_term)
     search_scheme = {
-          should:[
-            {
-              multi_match: {
-                type: 'phrase',
-                query: search_term,
-                fields: ['title', 'title.folded'],
-                boost: 8,
-              }
-            },
-            {
-              multi_match: {
-                type: 'best_fields',
-                query: search_term,
-                fields: ['series', 'series.raw'],
-                boost: 6,
-              }
-            },
-            {
-              multi_match: {
-                type: 'best_fields',
-                query: search_term,
-                fields: ['title', 'title.folded'],
-                boost: 8
-              }
-            },
-            {
-              multi_match: {
-                type: 'most_fields',
-                query: search_term,
-                fields: ['author', 'author.raw', 'author_other'],
-                boost: 7,
-              }
-            },
-            {
-              multi_match: {
-                type: 'best_fields',
-                query: search_term,
-                fields: ['title', 'title.folded'],
-                boost: 1,
-                fuzziness: 1
-              }
-            },
-            {
-              multi_match: {
-                type: 'best_fields',
-                query: search_term,
-                fields: ['author', 'author.raw', 'author_other'],
-                boost: 1,
-                fuzziness: 1
-              }
-            },
-            {
-              multi_match: {
-                type: 'most_fields',
-                query: search_term,
-                fields: ['subjects','genres', 'abstract', 'contents'],
-                boost: 10
-              }
-            },
-            {
-              multi_match: {
-                type: 'best_fields',
-                query: search_term,
-                fields: ['abstract', 'contents'],
-                boost: 1,
-                fuzziness: 1
-              }
+        should:[
+          {
+            multi_match: {
+            type: 'best_fields',
+            query: search_term,
+            fields: ['title_short^12','title.folded^11', 'title.raw^12','author^8', 'author_other^3','contents','abstract','subjects^3','series^7','genres'],
+            boost: 10
             }
-          ]
+          },
+          {
+            multi_match: {
+            type: 'best_fields',
+            query: search_term,
+            fields: ['title_short^11', 'title.folded^11', 'title.raw^12','author^8', 'author_other^2','contents','abstract','subjects^3','series^6','genres'],
+            fuzziness: 2,
+            boost: 1
+          }
         }
+      ]
+    }
     return search_scheme
   end
 
   def author(search_term)
        search_scheme = {
           should:[
-            multi_match: {
+            {
+              multi_match: {
+              type: 'phrase',
+              query: search_term,
+              fields: ['author^3', 'author_other'],
+              slop:  3,
+              boost: 10
+              }
+            },
+            {
+              multi_match: {
               type: 'best_fields',
               query: search_term,
-              fields: ['author', 'author_other'],
-              boost: 3
-          },
-           multi_match: {
-              type: 'best_fields',
-              query: search_term,
-              fields: ['author', 'author_other'],
-              fuzziness: 1
-          },
+              fields: ['author^3', 'author_other'],
+              fuzziness: 2,
+              boost: 1
+              }
+            }
         ]
       }
     return search_scheme
@@ -129,18 +87,20 @@ class Searchjob
       should:[
         {
           multi_match: {
-            type: 'most_fields',
+            type: 'phrase',
             query: search_term,
-            fields: ['title', 'title.folded'],
-            boost: 3
+            fields: ['title_short','title.folded', 'title.raw^4'],
+            slop:  3,
+            boost: 10
           }
         },
         {
           multi_match: {
-            type: 'most_fields',
-            query: search_term,
-            fields: ['title', 'title.folded'],
-            fuzziness: 1
+          type: 'best_fields',
+          query: search_term,
+          fields: ['title_short', 'title.folded', 'title.raw^4'],
+          fuzziness: 2,
+          boost: 1
           }
         }
       ]
@@ -150,18 +110,31 @@ class Searchjob
 
   def subject(search_term)
    search_scheme = {
-      should:[
-          {
-            match:
-              {subjects: search_term}},
-              {fuzzy: {subjects: search_term},
-          }
+        should:[
+            {
+              multi_match: {
+              type: 'phrase',
+              query: search_term,
+              fields: ['subjects^3', 'abstract', 'contents'],
+              slop:  3,
+              boost: 10
+              }
+            },
+            {
+              multi_match: {
+              type: 'best_fields',
+              query: search_term,
+              fields: ['subjects^3', 'abstract', 'contents'],
+              fuzziness: 2,
+              boost: 1
+              }
+            }
         ]
       }
     return search_scheme
   end
 
-  def record_id(search_term)
+  def record(search_term)
     results = Record.search query:
     {
       term:{
@@ -169,6 +142,16 @@ class Searchjob
       }
     }
     return massage_response(results)
+  end
+
+  def shelf(shelving_location)
+    filters = Array.new
+    shelving_location.each do |s|
+      filters.push(:term => {"holdings.location_id": s})
+    end
+    search_scheme = {
+      should: filters
+    }
   end
 
   def massage_response(results)

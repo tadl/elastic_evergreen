@@ -19,6 +19,9 @@ class MainController < ApplicationController
       page = 0
     end
     search_job = Searchjob.new
+    if search_type == 'record'
+      response = search_job.record(search_term)
+    else
     response = search_job.get_results(search_term,
 																			search_type,
 																			format_type,
@@ -31,7 +34,8 @@ class MainController < ApplicationController
 																			location_code,
                                       shelving_location,
                                       sort)
-  	respond_to do |format|
+  	end
+    respond_to do |format|
       format.html
       format.json {render json: response}
     end
