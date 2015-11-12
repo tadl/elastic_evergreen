@@ -36,19 +36,28 @@ class Searchjob
         should:[
           {
             multi_match: {
-            type: 'best_fields',
+            type: 'phrase',
             query: search_term,
-            fields: ['title_short^12','title.folded^11', 'title.raw^12','author^8', 'author_other^3','contents','abstract','subjects^3','series^7','genres'],
-            boost: 10
+            fields: ['title_short^12','title.folded^11', 'title.raw^12','author^8', 'author_other^3','contents','abstract^3','subjects^3','series^9','genres'],
+            slop:  3,
+            boost: 14
             }
           },
           {
             multi_match: {
             type: 'best_fields',
             query: search_term,
-            fields: ['title_short^11', 'title.folded^11', 'title.raw^12','author^8', 'author_other^2','contents','abstract','subjects^3','series^6','genres'],
+            fields: ['title_short^12','title.folded^11', 'title.raw^12','author^8', 'author_other^3','contents','abstract^3','subjects^3','series^9','genres'],
+            boost: 5
+            }
+          },
+          {
+            multi_match: {
+            type: 'most_fields',
+            query: search_term,
+            fields: ['title_short^11', 'title.folded^11', 'title.raw^12','author^8', 'author_other^2','contents','abstract^3','subjects^3','series^9','genres'],
             fuzziness: 2,
-            boost: 1
+            boost: 5
           }
         }
       ]
