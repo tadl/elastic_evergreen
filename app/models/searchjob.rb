@@ -15,6 +15,8 @@ class Searchjob
       min_score = 0.6
     elsif search_type == 'shelf'
       search_scheme = self.shelf(shelving_location)
+    elsif search_type == 'genre'
+      search_scheme = self.genre_search(genres)
     end
     filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
     sort_type = get_sort_type(sort)
@@ -157,6 +159,17 @@ class Searchjob
     filters = Array.new
     shelving_location.each do |s|
       filters.push(:term => {"holdings.location_id": s})
+    end
+    search_scheme = {
+      should: filters
+    }
+  end
+
+
+  def genre_search(genres)
+    filters = Array.new
+    genres.each do |s|
+      filters.push(:term => {"genres.raw": URI.unescape(s)})
     end
     search_scheme = {
       should: filters
