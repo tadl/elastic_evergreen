@@ -187,10 +187,6 @@ class Searchjob
 
   def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
     filters = Array.new
-    if available == 'true'
-      filters.push(:term => {"holdings.status": "Available"})
-      filters.push(:term => {"holdings.status": "Reshelving"})
-    end
 
     subjects.each do |s|
       filters.push(:term => {"subjects.raw": URI.unescape(s)})
@@ -220,6 +216,11 @@ class Searchjob
     end
 
     format_lock = Array.new
+
+    if available == 'true'
+      format_lock.push(:term => {"holdings.status": "Available"})
+      format_lock.push(:term => {"holdings.status": "Reshelving"})
+    end
 
     desired_formats = code_to_formats(format_type)
     desired_formats.each do |f|
