@@ -189,6 +189,7 @@ class Searchjob
     filters = Array.new
     if available == 'true'
       filters.push(:term => {"holdings.status": "Available"})
+      filters.push(:term => {"holdings.status": "Reshelving"})
     end
 
     subjects.each do |s|
