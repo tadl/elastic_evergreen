@@ -17,6 +17,8 @@ class Searchjob
       search_scheme = self.shelf(shelving_location)
     elsif search_type == 'genre'
       search_scheme = self.genre_search(genres)
+    elsif search_type == 'record_id'
+      return self.record_id_search(search_term)
     end
     filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
     sort_type = get_sort_type(sort)
@@ -145,7 +147,7 @@ class Searchjob
     return search_scheme
   end
 
-  def record(search_term)
+  def record_id_search(search_term)
     results = Record.search query:
     {
       term:{
@@ -218,8 +220,8 @@ class Searchjob
     format_lock = Array.new
 
     if available == 'true'
-      format_lock.push(:term => {"holdings.status": "Available"})
-      format_lock.push(:term => {"holdings.status": "Reshelving"})
+      filters.push(:term => {"holdings.status": "Available"})
+      filters.push(:term => {"holdings.status": "Reshelving"})
     end
 
     desired_formats = code_to_formats(format_type)
