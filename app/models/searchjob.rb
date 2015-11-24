@@ -160,7 +160,16 @@ class Searchjob
   def shelf(shelving_location)
     filters = Array.new
     shelving_location.each do |s|
-      filters.push(:term => {"holdings.location_id": s})
+      filters.push(:nested => {
+        :path => "holdings",
+        :filter =>{
+          :bool =>{
+            :should =>[
+              {:term => {"holdings.location_id": s}}
+            ]
+          }
+        }
+      })
     end
     search_scheme = {
       should: filters
@@ -189,7 +198,7 @@ class Searchjob
 
   def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
     filters = Array.new
-
+    location = code_to_location(location_code)
     subjects.each do |s|
       filters.push(:term => {"subjects.raw": URI.unescape(s)})
     end unless subjects.nil?
@@ -206,22 +215,46 @@ class Searchjob
       filters.push(:term => {"author.raw": URI.unescape(s)})
     end unless authors.nil?
 
-    shelving_location.each do |s|
-      filters.push(:term => {"holdings.location_id": shelving_location})
-    end unless shelving_location.nil?
-
     if location_code && location_code != '' && !location_code.nil?
-      location = code_to_location(location_code)
       if location != ''
-        filters.push(:term => {"holdings.circ_lib": location})
+        filters.push(:nested => {
+          :path => "holdings",
+          :filter =>{
+            :term => {"holdings.circ_lib": location}
+          }
+        })
       end
     end
 
     format_lock = Array.new
 
-    if available == 'true'
-      filters.push(:term => {"holdings.status": "Available"})
-      filters.push(:term => {"holdings.status": "Reshelving"})
+    if available == 'true' && location == ''
+      filters.push(:nested => {
+        :path => "holdings",
+        :filter =>{
+          :bool =>{
+            :should =>[
+              {:term => {"holdings.status": "Available"}},
+              {:term => {"holdings.status": "Reshelving"}},
+            ]
+          }
+        }
+      })
+    elsif available == 'true' 
+      filters.push(:nested => {
+        :path => "holdings",
+        :filter =>{
+          :bool =>{
+            :must =>[
+              {:term => {"holdings.circ_lib": location}}
+            ],
+            :should =>[
+              {:term => {"holdings.status": "Available"}},
+              {:term => {"holdings.status": "Reshelving"}},
+            ]
+          }
+        }
+      })
     end
 
     desired_formats = code_to_formats(format_type)
