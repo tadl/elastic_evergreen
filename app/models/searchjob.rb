@@ -158,19 +158,21 @@ class Searchjob
   end
 
   def shelf(shelving_location)
-    filters = Array.new
+    shelving_location_filters = Array.new
     shelving_location.each do |s|
-      filters.push(:nested => {
-        :path => "holdings",
-        :filter =>{
-          :bool =>{
-            :should =>[
-              {:term => {"holdings.location_id": s}}
-            ]
-          }
-        }
-      })
+      shelving_location_filters.push(:term => {"holdings.location_id": s})
     end
+    filters = Array.new
+    filters.push(:nested => {
+      :path => "holdings",
+      :filter =>{
+        :bool =>{
+          :should =>[
+            shelving_location_filters
+          ]
+        }
+      }
+    })
     search_scheme = {
       should: filters
     }
@@ -216,24 +218,22 @@ class Searchjob
     end unless authors.nil?
 
     if !shelving_location.nil?
+      shelving_location_filters = Array.new
+      shelving_location.each do |s|
+        shelving_location_filters.push(:term => {"holdings.location_id": s})
+      end
       if location == ''
-        shelving_location.each do |s|
-          filters.push(:nested => {
-            :path => "holdings",
-            :filter =>{
-              :bool =>{
-                :should =>[
-                  {:term => {"holdings.location_id": s}}
-                ]
-              }
+        filters.push(:nested => {
+          :path => "holdings",
+          :filter =>{
+            :bool =>{
+              :should =>[
+                shelving_location_filters
+              ]
             }
-          })
-        end
+          }
+        })
       else
-        shelving_location_filters = Array.new
-        shelving_location.each do |s|
-          shelving_location_filters.push(:term => {"holdings.location_id": s})
-        end
         filters.push(:nested => {
           :path => "holdings",
           :filter =>{
