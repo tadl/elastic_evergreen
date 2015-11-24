@@ -215,6 +215,42 @@ class Searchjob
       filters.push(:term => {"author.raw": URI.unescape(s)})
     end unless authors.nil?
 
+    if !shelving_location.nil?
+      if location == ''
+        shelving_location.each do |s|
+          filters.push(:nested => {
+            :path => "holdings",
+            :filter =>{
+              :bool =>{
+                :should =>[
+                  {:term => {"holdings.location_id": s}}
+                ]
+              }
+            }
+          })
+        end
+      else
+        shelving_location_filters = Array.new
+        shelving_location.each do |s|
+          shelving_location_filters.push(:term => {"holdings.location_id": s})
+        end
+        filters.push(:nested => {
+          :path => "holdings",
+          :filter =>{
+            :bool =>{
+              :must =>[
+                {:term => {"holdings.circ_lib": location}}
+              ],
+              :should =>[
+                shelving_location_filters
+              ]
+            }
+          }
+        })
+      end
+    end
+          
+
     if location_code && location_code != '' && !location_code.nil?
       if location != ''
         filters.push(:nested => {
