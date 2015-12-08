@@ -13,6 +13,9 @@ class Searchjob
     elsif search_type == 'subject'
       search_scheme = self.subject(search_term)
       min_score = 0.6
+    elsif search_type == 'series'
+      search_scheme = self.series(search_term)
+      min_score = 0.01
     elsif search_type == 'shelf'
       search_scheme = self.shelf(shelving_location)
     elsif search_type == 'genre'
@@ -146,6 +149,34 @@ class Searchjob
       }
     return search_scheme
   end
+
+  def series(search_term)
+   search_scheme = {
+        should:[
+            {
+              multi_match: {
+              type: 'phrase',
+              query: search_term,
+              fields: ['series'],
+              slop:  3,
+              boost: 10
+              }
+            },
+            {
+              multi_match: {
+              type: 'best_fields',
+              query: search_term,
+              fields: ['series'],
+              fuzziness: 2,
+              boost: 1
+              }
+            }
+        ]
+      }
+    return search_scheme
+  end
+
+
 
   def record_id_search(search_term)
     results = Record.search query:

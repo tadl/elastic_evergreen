@@ -2,7 +2,7 @@ class MainController < ApplicationController
 	require 'open-uri'
 	respond_to :html, :json
   def index
-  	search_term = URI.unescape(params[:query]) rescue ''
+  	search_term = URI.decode(params[:query]) rescue ''  
   	search_type = params[:search_type] rescue nil
     available = params[:available] rescue false
     subjects = params[:subjects] rescue nil
