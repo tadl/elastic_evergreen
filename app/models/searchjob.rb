@@ -28,7 +28,7 @@ class Searchjob
     end
     filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
     sort_type = get_sort_type(sort)
-    results = Record.search query: {
+    results = Record.search({query: {
         bool: search_scheme
       },
       filter:{
@@ -37,7 +37,10 @@ class Searchjob
       sort: sort_type,
       size: 25,
       from: page,
-      min_score: min_score
+      min_score: min_score},
+      {
+        preference: search_term
+      })
       return massage_response(results)
   end
 
