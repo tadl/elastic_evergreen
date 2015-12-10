@@ -14,7 +14,7 @@ class MainController < ApplicationController
     sort = params[:sort]  rescue nil
     shelving_location = params[:shelving_location] rescue nil
     if params[:page]
-      page = params[:page].to_i * 24
+      page = (params[:page].to_i * 24) + params[:page].to_i 
     else
       page = 0
     end
