@@ -1,6 +1,6 @@
 class Searchjob
 
-  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort)
+  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort, physical)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
       min_score = 0.01
@@ -26,7 +26,7 @@ class Searchjob
     elsif search_type == 'record_id'
       return self.record_id_search(search_term)
     end
-    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
+    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical)
     sort_type = get_sort_type(sort)
     results = Record.search({query: {
         bool: search_scheme
@@ -260,7 +260,7 @@ class Searchjob
     return massaged_response
   end
 
-  def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location)
+  def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical)
     filters = Array.new
     location = code_to_location(location_code)
     subjects.each do |s|
@@ -312,46 +312,62 @@ class Searchjob
       end
     end
           
-
+    #Location filter
     if location_code && location_code != '' && !location_code.nil?
       if location != ''
-        filters.push(:nested => {
-          :path => "holdings",
-          :filter =>{
-            :term => {"holdings.circ_lib": location}
-          }
+        filters.push(:bool =>{
+          :should =>[
+            {:nested => {
+              :path => "holdings",
+              :filter =>{
+                :term => {"holdings.circ_lib": location}
+              }
+            }},
+            {:term => {"electronic": true}}
+          ]
         })
       end
     end
 
     format_lock = Array.new
 
+    # availablity filter
     if available == 'true' && location == ''
-      filters.push(:nested => {
-        :path => "holdings",
-        :filter =>{
-          :bool =>{
-            :should =>[
-              {:term => {"holdings.status": "Available"}},
-              {:term => {"holdings.status": "Reshelving"}},
-            ]
-          }
-        }
+      filters.push(:bool =>{
+        :should =>[
+          {:nested => {
+            :path => "holdings",
+            :filter =>{
+              :bool =>{
+                :should =>[
+                  {:term => {"holdings.status": "Available"}},
+                  {:term => {"holdings.status": "Reshelving"}},
+                ]
+              }
+            }
+          }},
+          {:term => {"electronic": true}}
+        ]  
       })
     elsif available == 'true' 
-      filters.push(:nested => {
-        :path => "holdings",
-        :filter =>{
-          :bool =>{
-            :must =>[
-              {:term => {"holdings.circ_lib": location}}
-            ],
-            :should =>[
-              {:term => {"holdings.status": "Available"}},
-              {:term => {"holdings.status": "Reshelving"}},
-            ]
-          }
-        }
+      filters.push(:bool =>{
+        :should =>[
+          {:nested => {
+            :path => "holdings",
+            :filter =>{
+              :bool =>{
+                :must =>[
+                  {:term => {"holdings.circ_lib": location}}
+                ],
+                :should =>[
+                  {:term => {"holdings.status": "Available"}},
+                  {:term => {"holdings.status": "Reshelving"}},
+                ]
+              }
+            }
+          }},
+          {:term => {"electronic": true}}
+        ]
       })
     end
 
@@ -360,6 +376,10 @@ class Searchjob
       format_lock.push(:term => {'type_of_resource': f})
     end
 
+    #physical only filter
+    if physical == true || physical == 'true'
+      format_lock.push(:term => {'electronic':false})
+    end
 
     filters_hash = {:must => filters, :should => format_lock}
     return filters_hash

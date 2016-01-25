@@ -13,6 +13,7 @@ class MainController < ApplicationController
     location_code = params[:location_code] rescue nil
     sort = params[:sort]  rescue nil
     shelving_location = params[:shelving_location] rescue nil
+    physical = params[:physical] rescue nil
     if params[:page]
       page = (params[:page].to_i * 24) + params[:page].to_i 
     else
@@ -33,7 +34,8 @@ class MainController < ApplicationController
 																			authors,
 																			location_code,
                                       shelving_location,
-                                      sort)
+                                      sort,
+                                      physical)
   	end
     respond_to do |format|
       format.html
