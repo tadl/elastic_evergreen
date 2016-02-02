@@ -1,26 +1,50 @@
 class Searchjob
 
-  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort, physical)
+  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort, physical, minimum_score)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
-      min_score = 0.01
+      if !minimum_score.nil?
+        min_score = minimum_score
+      else
+        min_score = 0.01
+      end
     elsif search_type == 'author'
       search_scheme = self.author(search_term)
-      min_score = 0.09
+      if !minimum_score.nil?
+        min_score = minimum_score
+      else
+        min_score = 0.09
+      end
     elsif search_type == 'title'
       search_scheme = self.title(search_term)
-      min_score = 0.01
+      if !minimum_score.nil?
+        min_score = minimum_score
+      else
+        min_score = 0.01
+      end
     elsif search_type == 'subject'
       search_scheme = self.subject(search_term)
-      min_score = 0.6
+      if !minimum_score.nil?
+        min_score = minimum_score
+      else
+        min_score = 0.6
+      end
     elsif search_type == 'series'
       search_scheme = self.series(search_term)
-      min_score = 0.05
+      if !minimum_score.nil?
+        min_score = minimum_score
+      else
+        min_score = 0.05
+      end
     elsif search_type == 'shelf'
       search_scheme = self.shelf(shelving_location)
     elsif search_type == 'single_genre'
       search_scheme = self.single_genre(search_term)
-      min_score = 0.05
+      if !minimum_score.nil?
+        min_score = minimum_score
+      else
+        min_score = 0.05
+      end
     elsif search_type == 'genre'
       search_scheme = self.genre_search(genres)
     elsif search_type == 'record_id'

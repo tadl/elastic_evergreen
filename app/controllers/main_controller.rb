@@ -14,6 +14,7 @@ class MainController < ApplicationController
     sort = params[:sort]  rescue nil
     shelving_location = params[:shelving_location] rescue nil
     physical = params[:physical] rescue nil
+    minimum_score = params[:min_score].to_f rescue nil
     if params[:page]
       page = (params[:page].to_i * 24) + params[:page].to_i 
     else
@@ -35,7 +36,8 @@ class MainController < ApplicationController
 																			location_code,
                                       shelving_location,
                                       sort,
-                                      physical)
+                                      physical,
+                                      minimum_score)
   	end
     respond_to do |format|
       format.html
