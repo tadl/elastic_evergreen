@@ -75,7 +75,7 @@ class Searchjob
             multi_match: {
             type: 'phrase',
             query: search_term,
-            fields: ['title_short^12','title.folded^11', 'title.raw^12','author^8', 'author_other^3','contents','abstract^3','subjects^3','series^9','genres'],
+            fields: ['title_short^12', 'title_alt^12', 'title.folded^11', 'title.raw^12','author^8', 'author_other^3','contents','abstract^3','subjects^3','series^9','genres'],
             slop:  3,
             boost: 14
             }
@@ -84,7 +84,7 @@ class Searchjob
             multi_match: {
             type: 'best_fields',
             query: search_term,
-            fields: ['title_short^12','title.folded^11', 'title.raw^12','author^8', 'author_other^3','contents','abstract^3','subjects^3','series^9','genres'],
+            fields: ['title_short^12', 'title_alt^12', 'title.folded^11', 'title.raw^12','author^8', 'author_other^3','contents','abstract^3','subjects^3','series^9','genres'],
             boost: 5
             }
           },
@@ -92,7 +92,7 @@ class Searchjob
             multi_match: {
             type: 'most_fields',
             query: search_term,
-            fields: ['title_short^11', 'title.folded^11', 'title.raw^12','author^8', 'author_other^2','contents','abstract^3','subjects^3','series^9','genres'],
+            fields: ['title_short^11', 'title_alt^11', 'title.folded^11', 'title.raw^12','author^8', 'author_other^2','contents','abstract^3','subjects^3','series^9','genres'],
             fuzziness: 2,
             boost: 5
           }
@@ -135,7 +135,7 @@ class Searchjob
           multi_match: {
             type: 'phrase',
             query: search_term,
-            fields: ['title_short','title.folded', 'title.raw^4'],
+            fields: ['title_short', 'title_alt','title.folded', 'title.raw^4'],
             slop:  3,
             boost: 10
           }
@@ -144,7 +144,7 @@ class Searchjob
           multi_match: {
           type: 'best_fields',
           query: search_term,
-          fields: ['title_short', 'title.folded', 'title.raw^4'],
+          fields: ['title_short', 'title_alt', 'title.folded', 'title.raw^4'],
           fuzziness: 2,
           boost: 1
           }
