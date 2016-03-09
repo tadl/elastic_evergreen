@@ -49,6 +49,9 @@ class Searchjob
       search_scheme = self.genre_search(genres)
     elsif search_type == 'record_id'
       return self.record_id_search(search_term)
+    elsif search_type == 'isbn'
+      search_scheme = self.isbn(search_term)
+      min_score = 3
     end
     filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical)
     sort_type = get_sort_type(sort)
@@ -97,6 +100,15 @@ class Searchjob
             boost: 5
           }
         }
+      ]
+    }
+    return search_scheme
+  end
+
+  def isbn(search_term)
+    search_scheme ={
+      :must =>[
+        {:term => {"isbn": search_term}}
       ]
     }
     return search_scheme
