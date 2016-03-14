@@ -78,7 +78,7 @@ class Searchjob
             multi_match: {
             type: 'phrase',
             query: search_term,
-            fields: ['title_short^5', 'title_alt^12', 'title_display^15', 'title.raw^6','author^8', 'author_other^3','contents','abstract^5','subjects^3','series^9','genres'],
+            fields: ['title.folded^11', 'title.raw^12', 'title_short', 'author^7', 'title_alt', 'author_other^3','contents^3','abstract^3','subjects^3','series^6','genres'],
             slop:  100,
             boost: 14
             }
@@ -87,7 +87,8 @@ class Searchjob
             multi_match: {
             type: 'best_fields',
             query: search_term,
-            fields: ['title_short^5', 'title_alt^12', 'title_display^15', 'title.raw^6','author^8', 'author_other^3','contents','abstract^5','subjects^3','series^9','genres'],
+            fields: ['title.folded^11', 'title.raw^12','author^7', 'title_alt' , 'author_other^3','contents^3','abstract^3','subjects^3','series^6','genres'],
+            slop:  100,
             boost: 5
             }
           },
@@ -95,8 +96,9 @@ class Searchjob
             multi_match: {
             type: 'most_fields',
             query: search_term,
-            fields: ['title_short^5', 'title_alt^11', 'title_display^15', 'title.raw^6','author^8', 'author_other^2','contents','abstract^5','subjects^3','series^9','genres'],
+            fields: ['title.folded^11', 'title.raw^12','author^7', 'title_alt', 'author_other^2','contents^3','abstract^3','subjects^3','series^6','genres'],
             fuzziness: 2,
+            slop:  100,
             boost: 5
           }
         }
