@@ -410,8 +410,25 @@ class Searchjob
     end
 
     desired_formats = code_to_formats(format_type)
-    desired_formats.each do |f|
-      format_lock.push(:term => {'type_of_resource': f})
+    if format_type != 'ebooks'
+      desired_formats.each do |f|
+        format_lock.push(:term => {'type_of_resource': f})
+      end
+    elsif format_type == 'ebooks'
+      ebook_sources = Array.new
+      desired_formats[0].each do |f|
+        ebook_sources.push({:term => {'source': f}})
+      end
+      ebook_formats = Array.new
+      desired_formats[1].each do |f|
+        ebook_formats.push({:term => {'type_of_resource': f}})
+      end
+      filters.push(:bool =>{
+        :should => ebook_sources
+      })
+      filters.push(:bool =>{
+        :should => ebook_formats
+      })
     end
 
     #physical only filter
@@ -431,6 +448,8 @@ class Searchjob
       formats = ['moving image']
     elsif format_code == 'j'
       formats = ['sound recording-musical']
+    elsif format_code == 'ebooks'
+      formats = [['Safari','OverDrive','Hoopla'],['text', 'kit', 'sound recording-nonmusical', 'cartographic']]
     end
     return formats
   end
