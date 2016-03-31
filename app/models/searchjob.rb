@@ -449,7 +449,7 @@ class Searchjob
     elsif format_code == 'j'
       formats = ['sound recording-musical']
     elsif format_code == 'ebooks'
-      formats = [['Safari','OverDrive','Hoopla'],['text', 'kit', 'sound recording-nonmusical', 'cartographic']]
+      formats = [['Safari','OverDrive','Hoopla'],['text', 'kit', 'sound recording-nonmusical', 'cartographic', 'software, multimedia']]
     end
     return formats
   end
