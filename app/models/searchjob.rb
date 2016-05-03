@@ -85,11 +85,21 @@ class Searchjob
           },
           {
             multi_match: {
+            type: 'cross_fields',
+            query: search_term,
+            fields: ['title.folded', 'title.raw','author','contents'],
+            slop:  10,
+            fuzziness: 1,
+            boost: 25
+            }
+          },
+          {
+            multi_match: {
             type: 'best_fields',
             query: search_term,
             fields: ['title.folded^11', 'title.raw^12','author^7', 'title_alt' , 'author_other^3','contents^3','abstract^3','subjects^3','series^6','genres'],
             slop:  100,
-            boost: 5
+            boost: 1
             }
           },
           {
@@ -99,7 +109,7 @@ class Searchjob
             fields: ['title.folded^11', 'title.raw^12','author^7', 'title_alt', 'author_other^2','contents^3','abstract^3','subjects^3','series^6','genres'],
             fuzziness: 2,
             slop:  100,
-            boost: 5
+            boost: 1
           }
         }
       ]
