@@ -52,6 +52,9 @@ class Searchjob
     elsif search_type == 'isbn'
       search_scheme = self.isbn(search_term)
       min_score = 3
+    elsif search_type == 'call_number'
+      search_scheme = self.call_number(search_term)
+      min_score = 1
     end
     filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical)
     sort_type = get_sort_type(sort)
@@ -121,6 +124,21 @@ class Searchjob
     search_scheme ={
       :must =>[
         {:term => {"isbn": search_term}}
+      ]
+    }
+
+    return search_scheme
+  end
+
+  def call_number(search_term)
+    search_scheme ={
+      :should =>[
+        :nested => {
+          path: 'holdings',
+          query:{
+            :match_phrase_prefix => {'holdings.call_number': search_term}
+          }
+        }
       ]
     }
     return search_scheme
