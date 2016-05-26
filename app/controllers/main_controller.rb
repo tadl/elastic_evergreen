@@ -40,7 +40,7 @@ class MainController < ApplicationController
                                       physical,
                                       minimum_score)
     end
-    if response.length == 0 
+    if response.length == 0 && !params[:page] 
       minimum_score = 0.02 
           response = search_job.get_results(search_term,
                                       search_type,

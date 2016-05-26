@@ -6,7 +6,7 @@ class Searchjob
       if minimum_score != 0.0
         min_score = minimum_score
       else
-        min_score = 0.23
+        min_score = 0.15
       end
     elsif search_type == 'author'
       search_scheme = self.author(search_term)
@@ -81,7 +81,7 @@ class Searchjob
             multi_match: {
             type: 'phrase',
             query: search_term,
-            fields: ['title.folded^11', 'title.raw^12', 'title_short', 'author^7', 'title_alt', 'author_other^3','contents^3','abstract^3','subjects^3','series^6','genres'],
+            fields: ['title.folded^10', 'title.raw^10', 'title_short', 'author^7', 'title_alt', 'author_other^3','contents^5','abstract^5','subjects^3','series^6','genres'],
             slop:  100,
             boost: 14
             }
@@ -100,7 +100,7 @@ class Searchjob
             multi_match: {
             type: 'best_fields',
             query: search_term,
-            fields: ['title.folded^11', 'title.raw^12','author^7', 'title_alt' , 'author_other^3','contents^3','abstract^3','subjects^3','series^6','genres'],
+            fields: ['title.folded^10', 'title.raw^10','author^7', 'title_alt' , 'author_other^3','contents^5','abstract^5','subjects^3','series^6','genres'],
             slop:  100,
             boost: 1
             }
@@ -109,7 +109,7 @@ class Searchjob
             multi_match: {
             type: 'most_fields',
             query: search_term,
-            fields: ['title.folded^11', 'title.raw^12','author^7', 'title_alt', 'author_other^2','contents^3','abstract^3','subjects^3','series^6','genres'],
+            fields: ['title.folded^10', 'title.raw^10','author^7', 'title_alt', 'author_other^2','contents^5','abstract^5','subjects^3','series^6','genres'],
             fuzziness: 2,
             slop:  100,
             boost: 1
