@@ -14,7 +14,8 @@ class MainController < ApplicationController
     sort = params[:sort]  rescue nil
     shelving_location = params[:shelving_location] rescue nil
     physical = params[:physical] rescue nil
-    minimum_score = params[:min_score].to_f rescue nil
+    minimum_score = params[:min_score].to_f 
+    puts minimum_score
     if params[:page]
       page = (params[:page].to_i * 24) + params[:page].to_i 
     else
@@ -34,6 +35,23 @@ class MainController < ApplicationController
 																			series,
 																			authors,
 																			location_code,
+                                      shelving_location,
+                                      sort,
+                                      physical,
+                                      minimum_score)
+    end
+    if response.length == 0 
+      minimum_score = 0.02 
+          response = search_job.get_results(search_term,
+                                      search_type,
+                                      format_type,
+                                      page,
+                                      available,
+                                      subjects,
+                                      genres,
+                                      series,
+                                      authors,
+                                      location_code,
                                       shelving_location,
                                       sort,
                                       physical,
