@@ -6,7 +6,7 @@ class Searchjob
       if minimum_score != 0.0
         min_score = minimum_score
       else
-        min_score = 0.15
+        min_score = 0.2
       end
     elsif search_type == 'author'
       search_scheme = self.author(search_term)
@@ -76,45 +76,36 @@ class Searchjob
 
   def keyword(search_term)
     search_scheme = {
-        should:[
-          {
-            multi_match: {
+      should:[
+        {
+          multi_match: {
             type: 'phrase',
             query: search_term,
             fields: ['title.folded^10', 'title.raw^10', 'title_short', 'author^7', 'title_alt', 'author_other^3','contents^5','abstract^5','subjects^3','series^6','genres'],
             slop:  100,
             boost: 14
-            }
-          },
-          {
-            multi_match: {
+          }
+        },
+        {
+          multi_match: {
             type: 'cross_fields',
             query: search_term,
-            fields: ['title.folded', 'title.raw','author','contents'],
+            fields: ['title.folded^10', 'title.raw^10','author^2','contents','series'],
             slop:  10,
             fuzziness: 1,
             boost: 25
-            }
-          },
-          {
-            multi_match: {
-            type: 'best_fields',
-            query: search_term,
-            fields: ['title.folded^10', 'title.raw^10','author^7', 'title_alt' , 'author_other^3','contents^5','abstract^5','subjects^3','series^6','genres'],
-            slop:  100,
-            boost: 1
-            }
-          },
-          {
-            multi_match: {
+          }
+        },
+        {
+          multi_match: {
             type: 'most_fields',
             query: search_term,
-            fields: ['title.folded^10', 'title.raw^10','author^7', 'title_alt', 'author_other^2','contents^5','abstract^5','subjects^3','series^6','genres'],
+            fields: ['title.folded^10', 'title.raw','author', 'title_alt', 'author_other','contents','abstract','subjects','series','genres'],
             fuzziness: 2,
             slop:  100,
             boost: 1
           }
-        }
+        },
       ]
     }
     return search_scheme
