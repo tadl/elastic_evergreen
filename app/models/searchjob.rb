@@ -1,6 +1,6 @@
 class Searchjob
 
-  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort, physical, minimum_score)
+  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort, physical, minimum_score, fiction)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
       if minimum_score != 0.0
@@ -56,7 +56,7 @@ class Searchjob
       search_scheme = self.call_number(search_term)
       min_score = 1
     end
-    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical)
+    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical, fiction)
     sort_type = get_sort_type(sort)
     results = Record.search({query: {
         bool: search_scheme
@@ -317,7 +317,7 @@ class Searchjob
     return massaged_response
   end
 
-  def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical)
+  def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical, fiction)
     filters = Array.new
     location = code_to_location(location_code)
     subjects.each do |s|
@@ -448,6 +448,21 @@ class Searchjob
       filters.push(:bool =>{
         :should => ebook_formats
       })
+    end
+    fiction_filter = fiction
+    
+    if fiction_filter == "true"
+      filters.push(:bool =>{
+          :should =>[
+            {:term => {"fiction": true}},
+          ]
+        })
+    elsif fiction_filter == "false"
+        filters.push(:bool =>{
+          :should =>[
+            {:term => {"fiction": false}},
+          ]
+        })
     end
 
     #physical only filter

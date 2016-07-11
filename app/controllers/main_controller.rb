@@ -14,6 +14,7 @@ class MainController < ApplicationController
     sort = params[:sort]  rescue nil
     shelving_location = params[:shelving_location] rescue nil
     physical = params[:physical] rescue nil
+    fiction = params[:fiction] rescue nil
     minimum_score = params[:min_score].to_f 
     puts minimum_score
     if params[:page]
@@ -38,7 +39,8 @@ class MainController < ApplicationController
                                       shelving_location,
                                       sort,
                                       physical,
-                                      minimum_score)
+                                      minimum_score,
+                                      fiction)
     end
     if response.length <= 1 && !params[:page] 
       minimum_score = 0.02 
@@ -55,7 +57,8 @@ class MainController < ApplicationController
                                       shelving_location,
                                       sort,
                                       physical,
-                                      minimum_score)
+                                      minimum_score,
+                                      fiction)
   	end
     respond_to do |format|
       format.html
