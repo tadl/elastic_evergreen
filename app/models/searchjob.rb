@@ -58,19 +58,31 @@ class Searchjob
     end
     filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical, fiction)
     sort_type = get_sort_type(sort)
-    results = Record.search({query: {
-        bool: search_scheme
-      },
-      filter:{
-        bool: filters
-      },
-      sort: sort_type,
-      size: 25,
-      from: page,
-      min_score: min_score},
-      {
-        preference: search_term
-      })
+    if search_term != nil && search_term != ''
+      results = Record.search({query: {
+          bool: search_scheme
+        },
+        filter:{
+          bool: filters
+        },
+        sort: sort_type,
+        size: 25,
+        from: page,
+        min_score: min_score},
+        {
+          preference: search_term
+        })
+    else
+      results = Record.search({
+        filter:{
+          bool: filters
+        },
+        sort: sort_type,
+        size: 25,
+        from: page,
+        min_score: min_score,
+        })
+    end
       return massage_response(results)
   end
 
@@ -108,6 +120,11 @@ class Searchjob
         },
       ]
     }
+    return search_scheme
+  end
+
+  def empty_search()
+    search_scheme = {}
     return search_scheme
   end
 
