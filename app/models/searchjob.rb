@@ -494,7 +494,7 @@ class Searchjob
   def code_to_formats(format_code)
     formats = Array.new
     if format_code == 'a'
-      formats = ['text', 'kit', 'sound recording-nonmusical', 'cartographic']
+      formats = ['text', 'kit', 'cartographic']
     elsif format_code == 'g'
       formats = ['moving image']
     elsif format_code == 'j'
