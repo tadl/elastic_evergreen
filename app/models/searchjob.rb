@@ -530,12 +530,12 @@ class Searchjob
     if sort == nil || sort == '' || sort == 'relevancy'
       sort_type.push("_score")
       sort_type.push({ "author.raw": "asc" })
-      sort_type.push({ "title.raw": "asc" })
+      sort_type.push({ "title_nonfiling.sort": "asc" })
     else
       if sort == 'titleAZ'
-        sort_type.push({ "title.raw": "asc" })
+        sort_type.push({ "title_nonfiling.sort": "asc" })
       elsif sort == 'titleZA'
-        sort_type.push({ "title.raw": "desc" })
+        sort_type.push({ "title_nonfiling.sort": "desc" })
       elsif sort == 'AuthorAZ'
         sort_type.push({ "author.raw": "asc" })
       elsif sort == 'AuthorZA'
