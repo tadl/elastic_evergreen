@@ -1,0 +1,10 @@
+{
+    "require": {
+        "plugins": [
+            {
+                "name": "postgres",
+                "commands": ["postgres:create postgres-$APP", "postgres:link postgres-$APP $APP"]
+            }
+        ]
+    }
+}
