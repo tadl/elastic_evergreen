@@ -446,7 +446,7 @@ class Searchjob
     end
 
     desired_formats = code_to_formats(format_type)
-    if format_type != 'ebooks'
+    if format_type != 'ebooks' && format_type != 'large_print'
       desired_formats.each do |f|
         format_lock.push(:term => {'type_of_resource': f})
       end
@@ -465,7 +465,19 @@ class Searchjob
       filters.push(:bool =>{
         :should => ebook_formats
       })
+    elsif format_type == 'large_print'
+      filters.push(:bool =>{
+        :should =>[
+          :nested => {
+            path: 'holdings',
+            query:{
+              :match_phrase_prefix => {'holdings.call_number': 'LP'}
+            }
+          }
+        ]
+      })
     end
+
     fiction_filter = fiction
     
     if fiction_filter == "true"
