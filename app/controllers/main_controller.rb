@@ -18,7 +18,7 @@ class MainController < ApplicationController
     minimum_score = params[:min_score].to_f 
     puts minimum_score
     if params[:page]
-      page = (params[:page].to_i * 24) + params[:page].to_i 
+      page = (params[:page].to_i * 24)
     else
       page = 0
     end
