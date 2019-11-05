@@ -496,7 +496,7 @@ class Searchjob
 
     #physical only filter
     if physical == true || physical == 'true'
-      format_lock.push(:term => {'electronic':false})
+      filters.push(:term => {'electronic':false})
     end
 
     filters_hash = {:must => filters, :should => format_lock}
