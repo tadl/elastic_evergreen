@@ -533,6 +533,14 @@ class Searchjob
       location = 'TADL-FLPL'
     elsif location_code == '28'
       location = 'TADL-EBB'
+    elsif location_code == '44'
+      location = 'KCL'
+    elsif location_code == '48'
+      location = 'KPS-BSE'
+    elsif location_code == '49'
+      location = 'KPS-CSI'
+    elsif location_code == '50'
+      location = 'KPS-RCE'
     end
     return location
   end
