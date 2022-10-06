@@ -541,6 +541,10 @@ class Searchjob
       location = 'KPS-CSI'
     elsif location_code == '50'
       location = 'KPS-RCE'
+    elsif location_code == '51'
+      location = 'KPS-KMS'
+    elsif location_code == '52'
+      location = 'KPS-KHS'
     end
     return location
   end
