@@ -1,6 +1,6 @@
 class Searchjob
 
-  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort, physical, minimum_score, fiction)
+  def get_results(search_term, search_type, format_type, page, available, subjects, genres, series, authors, location_code, shelving_location, sort, physical, minimum_score, fiction, audience)
     if search_type.nil? || search_type == 'keyword'
       search_scheme = self.keyword(search_term)
       if minimum_score != 0.0
@@ -56,7 +56,7 @@ class Searchjob
       search_scheme = self.call_number(search_term)
       min_score = 1
     end
-    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical, fiction)
+    filters = process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical, fiction, audience)
     sort_type = get_sort_type(sort)
     if search_term != nil && search_term != ''
       results = Record.search({query: {
@@ -334,7 +334,7 @@ class Searchjob
     return massaged_response
   end
 
-  def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical, fiction)
+  def process_filters(available, subjects, genres, series, authors, format_type, location_code, shelving_location, physical, fiction, audience)
     filters = Array.new
     location = code_to_location(location_code)
     subjects.each do |s|
@@ -399,6 +399,38 @@ class Searchjob
             }},
             {:term => {"electronic": true}}
           ]
+        })
+      end
+    end
+
+    if !audience.nil?
+      if audience == 'juv'
+        filters.push({ 
+          bool:{
+            should:[
+              {term: {"audiences": "juvenile"}},
+              {term: {"audiences": "marc_juvenile"}},
+            ]
+          }
+        })
+      elsif audience == 'adult'
+        filters.push({ 
+          bool:{
+            should:[
+              {term: {"audiences": "adult"}},
+              {term: {"audiences": "marc_adult"}},
+              {term: {"audiences": "marc_general"}},
+            ]
+          }
+        })
+      elsif audience == 'ya'
+        filters.push({ 
+          bool:{
+            should:[
+              {term: {"audiences": "ya"}},
+              {term: {"audiences": "marc_adolescent"}},
+            ]
+          }
         })
       end
     end
