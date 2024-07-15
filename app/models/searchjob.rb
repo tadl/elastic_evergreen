@@ -478,7 +478,7 @@ class Searchjob
     end
 
     desired_formats = code_to_formats(format_type)
-    if format_type != 'ebooks' && format_type != 'large_print'
+    if format_type != 'ebooks' && format_type != 'large_print' && format_type != 'notated_music'
       desired_formats.each do |f|
         format_lock.push(:term => {'type_of_resource': f})
       end
@@ -508,6 +508,8 @@ class Searchjob
           }
         ]
       })
+    elsif format_type == 'notated_music'
+      filters.push({:term => {'type_of_resource': 'notated music'}})  
     end
 
     fiction_filter = fiction
